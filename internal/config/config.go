@@ -7,13 +7,19 @@ import (
 )
 
 type Config struct {
-	Server Server `json:"http_server"`
-	// TODO: storage
+	Server  Server  `json:"http_server"`
+	Storage Storage `json:"storage"`
 }
 
 type Server struct {
 	Address string `json:"address"`
 	// TODO: timeouts
+}
+
+type Storage struct {
+	Url      string `json:"database_url"`
+	MaxConns int    `json:"pool_max_conns"`
+	MinConns int    `json:"pool_min_conns"`
 }
 
 func LoadConfig(configPath string) (*Config, error) {
