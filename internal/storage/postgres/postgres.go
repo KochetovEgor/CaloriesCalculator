@@ -2,14 +2,27 @@ package postgres
 
 import (
 	"CaloriesCalculator/internal/config"
-	"CaloriesCalculator/internal/mylog"
+	"CaloriesCalculator/internal/domain"
+	"CaloriesCalculator/pkg/mylog"
 	"context"
+	"errors"
 	"fmt"
 	"net/url"
 	"strconv"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+func mapPgError(err error) error {
+	if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {
+		switch pgErr.Code {
+		case "23505":
+			return domain.ErrUserAlreadyExists
+		}
+	}
+	return err
+}
 
 type DB struct {
 	pool *pgxpool.Pool

@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"CaloriesCalculator/internal/mylog"
+	"CaloriesCalculator/pkg/mylog"
 	"context"
 	"fmt"
 )
