@@ -4,7 +4,10 @@ import (
 	"CaloriesCalculator/internal/domain"
 	"CaloriesCalculator/pkg/mylog"
 	"context"
+	"errors"
 	"fmt"
+
+	"github.com/jackc/pgx/v5"
 )
 
 const addUserToLogin = `
@@ -51,6 +54,9 @@ func (db *DB) SelectUser(ctx context.Context, username string) (domain.User, err
 	err := db.pool.QueryRow(ctx, selectUserFromLogin, username).Scan(
 		&user.Username, &user.HashPassword)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return user, domain.ErrInvalidUserOrPassword
+		}
 		return user, fmt.Errorf("error selecting user %s from table login: %w",
 			username, err)
 	}

@@ -1,18 +1,20 @@
 package main
 
 import (
-	"CaloriesCalculator/internal/config"
-	"CaloriesCalculator/internal/domain"
-	"CaloriesCalculator/internal/storage"
+	"CaloriesCalculator/internal/pkg/auth"
+	"CaloriesCalculator/internal/pkg/config"
+	"CaloriesCalculator/internal/service"
 	"CaloriesCalculator/internal/storage/postgres"
 	"CaloriesCalculator/pkg/mylog"
 	"context"
-	"fmt"
 	"log/slog"
 	"os"
 )
 
-const configBackendPath = "config/backend.json"
+const (
+	configBackendPath = "config/backend.json"
+	secretKeyPath     = "config/HS256key.txt"
+)
 
 func main() {
 	mylog.InitLogger(os.Stdout)
@@ -26,35 +28,36 @@ func main() {
 	}
 	slog.Info("configs loaded")
 
+	secretKey, err := config.LoadSecretKey(secretKeyPath)
+	if err != nil {
+		slog.Error(err.Error())
+		os.Exit(1)
+	}
+	auth.SetKey(secretKey)
+	slog.Info("secret key settled")
+
 	PostgresStorage, err := postgres.New(ctx, cfg.Storage)
 	if err != nil {
 		slog.Error(err.Error())
 		os.Exit(1)
 	}
-	storage.SetDefault(PostgresStorage)
-	slog.Info("storage created")
 
-	if err := storage.Init(ctx); err != nil {
+	service := service.New(PostgresStorage)
+
+	if err := service.Init(ctx); err != nil {
 		slog.Error(err.Error())
 		os.Exit(1)
 	}
 
-	if err := storage.AddUser(ctx, domain.User{"Egor", "123"}); err != nil {
+	/*app := http.New(service)
+	if err := app.Run(ctx, cfg.Server); err != nil {
 		slog.Error(err.Error())
-	}
+	}*/
 
-	if err := storage.DeleteUser(ctx, "egor"); err != nil {
-		slog.Error(err.Error())
-	}
-
-	user, err := storage.SelectUser(ctx, "Egor")
-	if err != nil {
-		slog.Error(err.Error())
-	}
-	fmt.Println(user)
+	service.Test(ctx)
 
 	defer func() {
-		storage.Close()
+		service.Close()
 		slog.Info("storage succesfully closed")
 	}()
 }

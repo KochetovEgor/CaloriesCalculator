@@ -1,8 +1,8 @@
 package postgres
 
 import (
-	"CaloriesCalculator/internal/config"
 	"CaloriesCalculator/internal/domain"
+	"CaloriesCalculator/internal/pkg/config"
 	"CaloriesCalculator/pkg/mylog"
 	"context"
 	"errors"

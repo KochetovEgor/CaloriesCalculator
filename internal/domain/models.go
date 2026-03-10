@@ -2,5 +2,5 @@ package domain
 
 type User struct {
 	Username     string
-	HashPassword string
+	HashPassword []byte
 }
