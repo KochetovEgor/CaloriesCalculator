@@ -20,9 +20,12 @@ func New(service *service.Service) *App {
 func (a *App) Run(ctx context.Context, cfg config.Server) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", a.Test)
+	mux.HandleFunc("POST /login", a.Login)
+
+	handler := logMiddleware(mux)
 
 	server := &http.Server{
-		Handler:      mux,
+		Handler:      handler,
 		Addr:         cfg.Address,
 		ReadTimeout:  cfg.Timeout.Duration,
 		WriteTimeout: cfg.Timeout.Duration,

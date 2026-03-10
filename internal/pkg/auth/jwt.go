@@ -7,6 +7,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+const Issuer = "calories_calculator"
+
 var secretKey []byte
 
 func SetKey(key []byte) {
@@ -19,9 +21,10 @@ func GetKey() []byte {
 
 func CreateAccessToken(user domain.User) (string, error) {
 	var claims = jwt.MapClaims{
-		"iss":       domain.Issuer,
+		"iss":       Issuer,
 		"sub":       user.Username,
 		"iat":       time.Now().Unix(),
+		"exp":       (time.Now().Add(time.Minute)).Unix(),
 		"user_name": user.Username,
 	}
 

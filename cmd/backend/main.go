@@ -1,6 +1,7 @@
 package main
 
 import (
+	"CaloriesCalculator/internal/controller/http"
 	"CaloriesCalculator/internal/pkg/auth"
 	"CaloriesCalculator/internal/pkg/config"
 	"CaloriesCalculator/internal/service"
@@ -49,12 +50,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	/*app := http.New(service)
+	app := http.New(service)
 	if err := app.Run(ctx, cfg.Server); err != nil {
 		slog.Error(err.Error())
-	}*/
+	}
 
-	service.Test(ctx)
+	//service.Test(ctx)
 
 	defer func() {
 		service.Close()

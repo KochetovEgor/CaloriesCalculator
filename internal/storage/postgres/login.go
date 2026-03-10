@@ -10,6 +10,8 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+const tableLoginName = "login"
+
 const addUserToLogin = `
 INSERT INTO login (username, hashed_password)
 VALUES ($1, $2);
@@ -21,8 +23,8 @@ func (db *DB) AddUser(ctx context.Context, user domain.User) error {
 		return fmt.Errorf("error adding user to table login: %w", mapPgError(err))
 	}
 	logger := mylog.FromContext(ctx)
-	logger.Info("user succesfully added to table login",
-		"username", user.Username)
+	logger.Debug("user added",
+		"table", tableLoginName, "username", user.Username)
 	return nil
 }
 
@@ -37,8 +39,8 @@ func (db *DB) DeleteUser(ctx context.Context, username string) error {
 		return fmt.Errorf("error deleting user %s from table login: %w", username, err)
 	}
 	logger := mylog.FromContext(ctx)
-	logger.Info("user succesfully deleted from table login",
-		"username", username)
+	logger.Debug("user deleted",
+		"table", tableLoginName, "username", username)
 	return nil
 }
 
@@ -61,7 +63,7 @@ func (db *DB) SelectUser(ctx context.Context, username string) (domain.User, err
 			username, err)
 	}
 	logger := mylog.FromContext(ctx)
-	logger.Info("succesfully selected user from table login",
-		"username", username)
+	logger.Debug("selected user",
+		"table", tableLoginName, "username", username)
 	return user, nil
 }

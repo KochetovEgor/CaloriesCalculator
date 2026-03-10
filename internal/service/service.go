@@ -49,14 +49,7 @@ func (s *Service) Test(ctx context.Context) {
 
 	fmt.Printf("%s\n", user)
 
-	user, err = s.AuthUser(ctx, "egor", "123")
-	if err != nil {
-		slog.Error(err.Error())
-	}
-
-	fmt.Printf("%s\n", user)
-
-	token, err := auth.CreateAccessToken(user)
+	token, err := s.AuthUser(ctx, "egor", "123")
 	if err != nil {
 		slog.Error(err.Error())
 	}

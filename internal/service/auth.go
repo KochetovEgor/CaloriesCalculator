@@ -7,18 +7,28 @@ import (
 	"context"
 )
 
-func (s *Service) AuthUser(ctx context.Context, username, password string) (domain.User, error) {
+func (s *Service) AuthUser(ctx context.Context, username, password string) (string, error) {
+	logger := mylog.FromContext(ctx)
+
 	user, err := s.storage.SelectUser(ctx, username)
 	if err != nil {
-		return domain.User{}, err
+		logErr(logger, "error selecting user", err)
+		return "", err
 	}
+	logger = logger.With("user", user)
+	logger.Info("selected user")
 
 	if err := auth.CheckPassword(user.HashPassword, password); err != nil {
-		return domain.User{}, domain.ErrInvalidUserOrPassword
+		logger.Info(domain.ErrInvalidUserOrPassword.Error())
+		return "", domain.ErrInvalidUserOrPassword
 	}
+	logger.Info("authorised")
 
-	logger := mylog.FromContext(ctx)
-	logger.Info("succesfully authorised", "username", username)
-
-	return user, nil
+	token, err := auth.CreateAccessToken(user)
+	if err != nil {
+		logger.Error("error creating access token")
+		return "", err
+	}
+	logger.Info("created access token")
+	return token, nil
 }
