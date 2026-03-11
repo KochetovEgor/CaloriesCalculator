@@ -17,12 +17,16 @@ func New(service *service.Service) *App {
 	return &App{service: service}
 }
 
+var publicPaths = map[string][]string{
+	"/login": nil,
+}
+
 func (a *App) Run(ctx context.Context, cfg config.Server) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", a.Test)
 	mux.HandleFunc("POST /login", a.Login)
 
-	handler := logMiddleware(mux)
+	handler := logMiddleware(authMiddleware(mux))
 
 	server := &http.Server{
 		Handler:      handler,
@@ -40,5 +44,12 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 }
 
 func (a *App) Test(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello world")
+	ctx := r.Context()
+	logger := mylog.FromContext(ctx)
+	user, ok := getUserFromContext(ctx)
+	if !ok {
+		respErrWithLog(w, "invalid user", http.StatusBadRequest, logger)
+		return
+	}
+	fmt.Fprintf(w, "Hello world %s\n", user)
 }

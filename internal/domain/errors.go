@@ -19,4 +19,6 @@ var (
 	ErrInvalidUserOrPassword = &Err{msg: "invalid user or password"}
 
 	ErrPaswordTooLong = &Err{msg: "password is too long"}
+
+	ErrInvalidAccessToken = &Err{msg: "invalid access token"}
 )
