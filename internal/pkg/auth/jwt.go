@@ -29,7 +29,7 @@ func CreateAccessToken(user domain.User) (string, error) {
 		"iss":       Issuer,
 		"sub":       user.Username,
 		"iat":       time.Now().Unix(),
-		"exp":       (time.Now().Add(time.Minute * 3)).Unix(),
+		"exp":       (time.Now().Add(time.Minute * 10)).Unix(),
 		"user_name": user.Username,
 	}
 

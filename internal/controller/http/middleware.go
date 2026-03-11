@@ -25,7 +25,7 @@ func (w *statusCodeWriter) WriteHeader(code int) {
 func logMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		scw := &statusCodeWriter{ResponseWriter: w}
+		scw := &statusCodeWriter{ResponseWriter: w, statusCode: 200}
 
 		logger := slog.Default().With(
 			"method", r.Method,
@@ -69,7 +69,7 @@ func authMiddleware(next http.Handler) http.Handler {
 
 		const bearerPrefix = "Bearer "
 		if authHeader == "" || !strings.HasPrefix(authHeader, bearerPrefix) {
-			respErrWithLog(w, "missing access token", http.StatusUnauthorized, logger)
+			errorWithLog(w, "missing access token", http.StatusUnauthorized, logger)
 			return
 		}
 
@@ -77,7 +77,7 @@ func authMiddleware(next http.Handler) http.Handler {
 
 		user, err := auth.GetUserFromToken(rawToken)
 		if err != nil {
-			respErrWithLog(w, "Invalid or expired token", http.StatusUnauthorized, logger)
+			errorWithLog(w, "Invalid or expired token", http.StatusUnauthorized, logger)
 			return
 		}
 

@@ -9,23 +9,26 @@ import (
 	"log/slog"
 )
 
-// Service contains storage of type Storage.
+// Service contains storages.
 type Service struct {
-	storage Storage
+	userStorage UserStorage
 }
 
-func New(storage Storage) *Service {
-	return &Service{storage: storage}
+func New(userStorage UserStorage) *Service {
+	return &Service{userStorage: userStorage}
 }
 
-// Close closes Service.storage.
+// Close closes all storages.
 func (s *Service) Close() error {
-	return s.storage.Close()
+	if err := s.userStorage.Close(); err != nil {
+		return err
+	}
+	return nil
 }
 
-// Init initializes storage.
+// Init initializes all storages.
 func (s *Service) Init(ctx context.Context) error {
-	if err := s.storage.Init(ctx); err != nil {
+	if err := s.userStorage.Init(ctx); err != nil {
 		return fmt.Errorf("error initializing service: %w", err)
 	}
 	return nil
@@ -33,16 +36,16 @@ func (s *Service) Init(ctx context.Context) error {
 
 func (s *Service) Test(ctx context.Context) {
 	hashPassword, _ := auth.HashPassword("123")
-	if err := s.storage.AddUser(ctx, domain.User{Username: "Egor",
+	if err := s.userStorage.Add(ctx, domain.User{Username: "Egor",
 		HashPassword: hashPassword}); err != nil {
 		slog.Error(err.Error())
 	}
 
-	if err := s.storage.DeleteUser(ctx, "egor"); err != nil {
+	if err := s.userStorage.Delete(ctx, "egor"); err != nil {
 		slog.Error(err.Error())
 	}
 
-	user, err := s.storage.SelectUser(ctx, "Egor")
+	user, err := s.userStorage.Select(ctx, "Egor")
 	if err != nil {
 		slog.Error(err.Error())
 	}

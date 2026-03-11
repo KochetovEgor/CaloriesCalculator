@@ -48,7 +48,7 @@ func (a *App) Test(w http.ResponseWriter, r *http.Request) {
 	logger := mylog.FromContext(ctx)
 	user, ok := getUserFromContext(ctx)
 	if !ok {
-		respErrWithLog(w, "invalid user", http.StatusBadRequest, logger)
+		errorWithLog(w, "invalid user", http.StatusBadRequest, logger)
 		return
 	}
 	fmt.Fprintf(w, "Hello world %s\n", user)

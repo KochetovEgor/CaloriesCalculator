@@ -12,17 +12,17 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 
 	username, password, ok := r.BasicAuth()
 	if !ok {
-		respErrWithLog(w, "Unauthorized", http.StatusUnauthorized, logger)
+		errorWithLog(w, "Unauthorized", http.StatusUnauthorized, logger)
 	}
 
 	token, err := a.service.AuthUser(r.Context(), username, password)
 	if err != nil {
 		if err, ok := domain.ExtractErr(err); ok {
 			w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
-			respErrWithLog(w, err.Error(), http.StatusUnauthorized, logger)
+			errorWithLog(w, err.Error(), http.StatusUnauthorized, logger)
 			return
 		}
-		respErrWithLog(w, "Internal error", http.StatusInternalServerError, logger)
+		errorWithLog(w, "Internal error", http.StatusInternalServerError, logger)
 		return
 	}
 

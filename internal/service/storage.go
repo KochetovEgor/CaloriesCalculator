@@ -5,11 +5,11 @@ import (
 	"context"
 )
 
-// Storage is an intarface for interaction with storage.
-type Storage interface {
+// UserStorage is an interface for interaction with user storage.
+type UserStorage interface {
 	Close() error
 	Init(ctx context.Context) error
-	AddUser(ctx context.Context, user domain.User) error
-	DeleteUser(ctx context.Context, username string) error
-	SelectUser(ctx context.Context, username string) (domain.User, error)
+	Add(ctx context.Context, user domain.User) error
+	Delete(ctx context.Context, username string) error
+	Select(ctx context.Context, username string) (domain.User, error)
 }

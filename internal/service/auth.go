@@ -10,7 +10,7 @@ import (
 func (s *Service) AuthUser(ctx context.Context, username, password string) (string, error) {
 	logger := mylog.FromContext(ctx)
 
-	user, err := s.storage.SelectUser(ctx, username)
+	user, err := s.userStorage.Select(ctx, username)
 	if err != nil {
 		logErr(logger, "error selecting user", err)
 		return "", err

@@ -37,13 +37,21 @@ func main() {
 	auth.SetKey(secretKey)
 	slog.Info("secret key settled")
 
-	PostgresStorage, err := postgres.New(ctx, cfg.Storage)
+	postgresPool, err := postgres.NewPool(ctx, cfg.Storage)
+
 	if err != nil {
 		slog.Error(err.Error())
 		os.Exit(1)
 	}
 
-	service := service.New(PostgresStorage)
+	userStorage := postgres.NewUserStorage(postgresPool)
+
+	service := service.New(userStorage)
+
+	defer func() {
+		service.Close()
+		slog.Info("storage succesfully closed")
+	}()
 
 	if err := service.Init(ctx); err != nil {
 		slog.Error(err.Error())
@@ -56,9 +64,4 @@ func main() {
 	}
 
 	//service.Test(ctx)
-
-	defer func() {
-		service.Close()
-		slog.Info("storage succesfully closed")
-	}()
 }

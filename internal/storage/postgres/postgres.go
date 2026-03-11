@@ -14,6 +14,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// mapPgError maps typical postgres error into domain.errors, but doesn't change other errors.
 func mapPgError(err error) error {
 	if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {
 		switch pgErr.Code {
@@ -24,11 +25,8 @@ func mapPgError(err error) error {
 	return err
 }
 
-type DB struct {
-	pool *pgxpool.Pool
-}
-
-func New(ctx context.Context, cfg config.Storage) (*DB, error) {
+// NewPool creates new postgres connection pool with given config cfg.
+func NewPool(ctx context.Context, cfg config.Storage) (*pgxpool.Pool, error) {
 	logger := mylog.FromContext(ctx)
 
 	u, err := url.Parse(cfg.Url)
@@ -52,12 +50,5 @@ func New(ctx context.Context, cfg config.Storage) (*DB, error) {
 	}
 	logger.Info("storage pool succesfully pinged")
 
-	return &DB{pool: pool}, nil
-}
-
-func (db *DB) Close() error {
-	if db.pool != nil {
-		db.pool.Close()
-	}
-	return nil
+	return pool, nil
 }
