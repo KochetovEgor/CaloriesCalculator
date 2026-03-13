@@ -4,19 +4,52 @@ package mylog
 
 import (
 	"context"
+	"errors"
 	"io"
 	"log/slog"
 )
 
+type errorMiddleware struct {
+	next slog.Handler
+}
+
+func newErrorMiddleware(next slog.Handler) *errorMiddleware {
+	return &errorMiddleware{next: next}
+}
+
+func (em *errorMiddleware) Enabled(ctx context.Context, level slog.Level) bool {
+	return em.next.Enabled(ctx, level)
+}
+
+func (em *errorMiddleware) Handle(ctx context.Context, record slog.Record) error {
+	if record.Level == slog.LevelError {
+		err := ErrFromContext(ctx)
+		if attrsErr, ok := errors.AsType[*Error](err); ok {
+			record.AddAttrs(attrsErr.attrs...)
+		}
+	}
+
+	return em.next.Handle(ctx, record)
+}
+
+func (em *errorMiddleware) WithAttrs(attrs []slog.Attr) slog.Handler {
+	return &errorMiddleware{next: em.next.WithAttrs(attrs)}
+}
+
+func (em *errorMiddleware) WithGroup(name string) slog.Handler {
+	return &errorMiddleware{next: em.next.WithGroup(name)}
+}
+
 // InitLogger initializes logger, that writes in w, and makes it default in "log/slog" package
 func InitLogger(w io.Writer) {
-	handler := slog.NewJSONHandler(w, &slog.HandlerOptions{Level: slog.LevelDebug})
+	handlerJSON := slog.NewJSONHandler(w, &slog.HandlerOptions{Level: slog.LevelDebug})
+	handler := newErrorMiddleware(handlerJSON)
 	slog.SetDefault(slog.New(handler))
 }
 
-type contextKey int
+type contextKey string
 
-const loggerKey contextKey = 0
+const loggerKey contextKey = "log"
 
 // NewContext putting logger in ctx and returns new context.Context
 func NewContext(ctx context.Context, logger *slog.Logger) context.Context {
