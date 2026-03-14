@@ -4,34 +4,77 @@ import (
 	"CaloriesCalculator/internal/domain"
 	"CaloriesCalculator/pkg/mylog"
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
+type loginResponse struct {
+	AccessToken string `json:"access_token"`
+}
+
 func (a *App) Login(w http.ResponseWriter, r *http.Request) {
-	logger := mylog.FromContext(r.Context())
+	ctx := r.Context()
+	logger := mylog.FromContext(ctx)
 
 	username, password, ok := r.BasicAuth()
 	if !ok {
 		errorWithLog(w, "Unauthorized", http.StatusUnauthorized, logger)
+		return
 	}
 
-	token, err := a.service.AuthUser(r.Context(), username, password)
+	token, err := a.service.AuthUser(ctx, username, password)
 	if err != nil {
-		if err, ok := domain.ExtractErr(err); ok {
+		var statusCcode int
+		if errors.Is(err, domain.ErrInternal) {
+			statusCcode = http.StatusInternalServerError
+		} else {
+			statusCcode = http.StatusUnauthorized
 			w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
-			errorWithLog(w, err.Error(), http.StatusUnauthorized, logger)
-			return
 		}
-		errorWithLog(w, "Internal error", http.StatusInternalServerError, logger)
+		errorWithLog(w, err.Error(), statusCcode, logger)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	type response struct {
-		AccessToken string `json:"access_token"`
+	json.NewEncoder(w).Encode(loginResponse{AccessToken: token})
+}
+
+type registerRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type registerResponse struct {
+	Username string `json:"username"`
+}
+
+func (a *App) Register(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	logger := mylog.FromContext(ctx)
+
+	userReq := &registerRequest{}
+	err := json.NewDecoder(r.Body).Decode(userReq)
+	if err != nil {
+		errorWithLog(w, "invalid request body", http.StatusBadRequest, logger)
+		return
 	}
 
-	json.NewEncoder(w).Encode(response{AccessToken: token})
+	user, err := a.service.RegisterUser(ctx, userReq.Username, userReq.Password)
+	if err != nil {
+		var statusCode int
+		if errors.Is(err, domain.ErrInternal) {
+			statusCode = http.StatusInternalServerError
+		} else {
+			statusCode = http.StatusUnauthorized
+		}
+		errorWithLog(w, err.Error(), statusCode, logger)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(registerResponse{Username: user.Username})
 }

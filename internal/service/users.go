@@ -33,3 +33,29 @@ func (s *Service) AuthUser(ctx context.Context, username, password string) (stri
 
 	return token, nil
 }
+
+func (s *Service) RegisterUser(ctx context.Context, username, password string) (domain.User, error) {
+	logger := mylog.FromContext(ctx)
+
+	if err := validatePassword(password); err != nil {
+		logger.Info(err.Error())
+		return domain.User{}, err
+	}
+
+	hashPassword, err := auth.HashPassword(password)
+	if err != nil {
+		err = convertErrAndLog(ctx, logger, "error hashing password", err)
+		return domain.User{}, err
+	}
+
+	user := domain.User{Username: username, HashPassword: hashPassword}
+	logger = logger.With("user", user)
+
+	if err := s.userStorage.Add(ctx, user); err != nil {
+		err = convertErrAndLog(ctx, logger, "error adding user", err)
+		return domain.User{}, err
+	}
+	logger.Info("user added")
+
+	return user, nil
+}

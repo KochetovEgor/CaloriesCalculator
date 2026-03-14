@@ -13,10 +13,12 @@ import (
 // If password is longer than 72 bytes it returns domain.ErrPasswordTooLong error.
 func HashPassword(password string) ([]byte, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if errors.Is(err, bcrypt.ErrPasswordTooLong) {
-		err = domain.ErrPaswordTooLong
-	} else {
-		err = fmt.Errorf("error generating bcrypt hash: %w", err)
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrPasswordTooLong) {
+			err = domain.ErrPaswordTooLong
+		} else {
+			err = fmt.Errorf("error generating bcrypt hash: %w", err)
+		}
 	}
 	return hash, err
 }
