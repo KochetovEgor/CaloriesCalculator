@@ -30,8 +30,10 @@ const tableUsersName = "users"
 
 const createTableUsers = `
 CREATE TABLE IF NOT EXISTS users (
-	username text PRIMARY KEY,
-	hashed_password text NOT NULL
+	id SERIAL PRIMARY KEY,
+	username text NOT NULL,
+	hashed_password text NOT NULL,
+	CONSTRAINT unique_username UNIQUE (username)
 );
 `
 
