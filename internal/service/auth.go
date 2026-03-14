@@ -12,7 +12,7 @@ func (s *Service) AuthUser(ctx context.Context, username, password string) (stri
 
 	user, err := s.userStorage.Select(ctx, username)
 	if err != nil {
-		logErr(logger, "error selecting user", err)
+		err = convertErrAndLog(ctx, logger, "error selecting user", err)
 		return "", err
 	}
 	logger = logger.With("user", user)
@@ -26,9 +26,10 @@ func (s *Service) AuthUser(ctx context.Context, username, password string) (stri
 
 	token, err := auth.CreateAccessToken(user)
 	if err != nil {
-		logger.Error("error creating access token")
+		err = convertErrAndLog(ctx, logger, "error creating access token", err)
 		return "", err
 	}
 	logger.Info("created access token")
+
 	return token, nil
 }

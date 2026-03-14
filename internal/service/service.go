@@ -4,9 +4,9 @@ package service
 import (
 	"CaloriesCalculator/internal/domain"
 	"CaloriesCalculator/internal/pkg/auth"
+	"CaloriesCalculator/pkg/mylog"
 	"context"
 	"fmt"
-	"log/slog"
 )
 
 // Service contains storages.
@@ -35,27 +35,40 @@ func (s *Service) Init(ctx context.Context) error {
 }
 
 func (s *Service) Test(ctx context.Context) {
+	logger := mylog.FromContext(ctx)
+
 	hashPassword, _ := auth.HashPassword("123")
 	if err := s.userStorage.Add(ctx, domain.User{Username: "Egor",
 		HashPassword: hashPassword}); err != nil {
-		slog.Error(err.Error())
+		convertErrAndLog(ctx, logger, "error adding user", err)
 	}
 
 	if err := s.userStorage.Delete(ctx, "egor"); err != nil {
-		slog.Error(err.Error())
+		convertErrAndLog(ctx, logger, "error deleting user", err)
 	}
 
 	user, err := s.userStorage.Select(ctx, "Egor")
 	if err != nil {
-		slog.Error(err.Error())
+		convertErrAndLog(ctx, logger, "error selecting user", err)
 	}
 
 	fmt.Printf("%s\n", user)
 
-	token, err := s.AuthUser(ctx, "egor", "123")
+	/*token, err := s.AuthUser(ctx, "egor", "123")
 	if err != nil {
 		slog.Error(err.Error())
 	}
 
-	fmt.Println(token)
+	fmt.Println(token)*/
+
+	/*logger := mylog.FromContext(ctx)
+
+	errBase := errors.New("test error")
+	fn := func(err error) error {
+		return mylog.WrapError(err, slog.Bool("bool test", false), slog.Int("nested int test", 32))
+	}
+	err := fn(errBase)
+	err = mylog.WrapError(err, slog.String("hello", "it's mi"), slog.Int("int test", 64))
+	ctx = mylog.ErrToContext(ctx, err)
+	logger.ErrorContext(ctx, err.Error())*/
 }

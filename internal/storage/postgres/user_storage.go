@@ -4,10 +4,8 @@ import (
 	"CaloriesCalculator/internal/domain"
 	"CaloriesCalculator/pkg/mylog"
 	"context"
-	"errors"
 	"fmt"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -39,13 +37,18 @@ CREATE TABLE IF NOT EXISTS users (
 
 // Init initialises table for working with users.
 func (s *UserStorage) Init(ctx context.Context) error {
-	logger := mylog.FromContext(ctx)
+	attrs := []any{
+		"table", tableUsersName,
+	}
+	logger := mylog.FromContext(ctx).With(attrs...)
 
 	_, err := s.pool.Exec(ctx, createTableUsers)
 	if err != nil {
-		return fmt.Errorf("error creating table users: %w", err)
+		err = mylog.WrapError(err, attrs...)
+		return fmt.Errorf("error creating table: %w", err)
 	}
-	logger.Info("table created", "table", tableUsersName)
+
+	logger.Debug("table created")
 	return nil
 }
 
@@ -56,13 +59,22 @@ VALUES ($1, $2);
 
 // Add adds user to storage.
 func (s *UserStorage) Add(ctx context.Context, user domain.User) error {
+	attrs := []any{
+		"table", tableUsersName,
+		"user", user,
+	}
+	logger := mylog.FromContext(ctx).With(attrs...)
+
 	_, err := s.pool.Exec(ctx, addUserToUsers, user.Username, user.HashPassword)
 	if err != nil {
-		return fmt.Errorf("error adding user to table users: %w", mapPgError(err))
+		if isUniqueViolation(err) {
+			return domain.ErrUserAlreadyExists
+		}
+		err = mylog.WrapError(err, attrs...)
+		return fmt.Errorf("error adding user to table: %w", err)
 	}
-	logger := mylog.FromContext(ctx)
-	logger.Debug("user added",
-		"table", tableUsersName, "username", user.Username)
+
+	logger.Debug("user added")
 	return nil
 }
 
@@ -73,18 +85,23 @@ WHERE username = $1;
 
 // Delete deletes user from storage.
 func (s *UserStorage) Delete(ctx context.Context, username string) error {
+	attrs := []any{
+		"table", tableUsersName,
+		"username", username,
+	}
+	logger := mylog.FromContext(ctx).With(attrs...)
+
 	_, err := s.pool.Exec(ctx, deleteUserFromUsers, username)
 	if err != nil {
-		return fmt.Errorf("error deleting user %s from table users: %w", username, err)
+		err = mylog.WrapError(err, attrs...)
+		return fmt.Errorf("error deleting user from table: %w", err)
 	}
-	logger := mylog.FromContext(ctx)
-	logger.Debug("user deleted",
-		"table", tableUsersName, "username", username)
+	logger.Debug("user deleted")
 	return nil
 }
 
 const selectUserFromUsers = `
-SELECT 
+SELECT
 	username, hashed_password
 FROM users
 WHERE username = $1;
@@ -92,18 +109,22 @@ WHERE username = $1;
 
 // Select selects user from storage and returns it.
 func (s *UserStorage) Select(ctx context.Context, username string) (domain.User, error) {
+	attrs := []any{
+		"table", tableUsersName,
+		"username", username,
+	}
+	logger := mylog.FromContext(ctx).With(attrs...)
+
 	var user domain.User
 	err := s.pool.QueryRow(ctx, selectUserFromUsers, username).Scan(
 		&user.Username, &user.HashPassword)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
+		if isNoRows(err) {
 			return user, domain.ErrInvalidUserOrPassword
 		}
-		return user, fmt.Errorf("error selecting user %s from table users: %w",
-			username, err)
+		err = mylog.WrapError(err, attrs...)
+		return user, fmt.Errorf("error selecting user from table: %w", err)
 	}
-	logger := mylog.FromContext(ctx)
-	logger.Debug("selected user",
-		"table", tableUsersName, "username", username)
+	logger.Debug("selected user")
 	return user, nil
 }
