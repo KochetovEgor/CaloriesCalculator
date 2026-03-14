@@ -25,7 +25,7 @@ func (em *errorMiddleware) Handle(ctx context.Context, record slog.Record) error
 	if record.Level == slog.LevelError {
 		err := ErrFromContext(ctx)
 		if attrsErr, ok := errors.AsType[*Error](err); ok {
-			record.AddAttrs(attrsErr.attrs...)
+			record.Add(attrsErr.attrs...)
 		}
 	}
 
@@ -41,8 +41,8 @@ func (em *errorMiddleware) WithGroup(name string) slog.Handler {
 }
 
 // InitLogger initializes logger, that writes in w, and makes it default in "log/slog" package
-func InitLogger(w io.Writer) {
-	handlerJSON := slog.NewJSONHandler(w, &slog.HandlerOptions{Level: slog.LevelDebug})
+func InitLogger(w io.Writer, level slog.Level) {
+	handlerJSON := slog.NewJSONHandler(w, &slog.HandlerOptions{Level: level})
 	handler := newErrorMiddleware(handlerJSON)
 	slog.SetDefault(slog.New(handler))
 }

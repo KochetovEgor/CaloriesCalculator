@@ -3,12 +3,11 @@ package mylog
 import (
 	"context"
 	"errors"
-	"log/slog"
 )
 
 type Error struct {
 	err   error
-	attrs []slog.Attr
+	attrs []any
 }
 
 func (e *Error) Error() string {
@@ -19,7 +18,7 @@ func (e *Error) Unwrap() error {
 	return e.err
 }
 
-func WrapError(err error, attrs ...slog.Attr) error {
+func WrapError(err error, attrs ...any) error {
 	if attrErr, ok := errors.AsType[*Error](err); ok {
 		attrs = append(attrs, attrErr.attrs...)
 	}
