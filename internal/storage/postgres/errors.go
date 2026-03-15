@@ -17,3 +17,7 @@ func isUniqueViolation(err error) bool {
 func isNoRows(err error) bool {
 	return errors.Is(err, pgx.ErrNoRows)
 }
+
+func isNoAffectedRows(ct pgconn.CommandTag) bool {
+	return ct.RowsAffected() == 0
+}

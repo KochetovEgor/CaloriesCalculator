@@ -68,6 +68,6 @@ func GetUserFromToken(accessToken string) (domain.User, error) {
 		return user, err
 	}
 
-	user.Username = claims["user_name"].(string)
+	user.Username, _ = claims["user_name"].(string)
 	return user, nil
 }

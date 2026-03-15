@@ -7,7 +7,6 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
-	"slices"
 	"strings"
 )
 
@@ -54,15 +53,8 @@ func getUserFromContext(ctx context.Context) (domain.User, bool) {
 	return user, ok
 }
 
-func authMiddleware(next http.Handler) http.Handler {
+func authMiddleware(next http.HandlerFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if methods, ok := publicPaths[r.URL.Path]; ok {
-			if methods == nil || slices.Contains(methods, r.Method) {
-				next.ServeHTTP(w, r)
-				return
-			}
-		}
-
 		logger := mylog.FromContext(r.Context())
 
 		authHeader := r.Header.Get("Authorization")
@@ -82,6 +74,6 @@ func authMiddleware(next http.Handler) http.Handler {
 		}
 
 		ctx := putUserToContext(r.Context(), user)
-		next.ServeHTTP(w, r.WithContext(ctx))
+		next(w, r.WithContext(ctx))
 	})
 }

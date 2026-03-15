@@ -17,18 +17,13 @@ func New(service *service.Service) *App {
 	return &App{service: service}
 }
 
-var publicPaths = map[string][]string{
-	"/login":    nil,
-	"/register": nil,
-}
-
 func (a *App) Run(ctx context.Context, cfg config.Server) error {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", a.Test)
+	mux.Handle("/", authMiddleware(a.Test))
 	mux.HandleFunc("POST /login", a.Login)
 	mux.HandleFunc("POST /register", a.Register)
 
-	handler := logMiddleware(authMiddleware(mux))
+	handler := logMiddleware(mux)
 
 	server := &http.Server{
 		Handler:      handler,

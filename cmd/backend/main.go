@@ -1,7 +1,6 @@
 package main
 
 import (
-	"CaloriesCalculator/internal/controller/http"
 	"CaloriesCalculator/internal/pkg/auth"
 	"CaloriesCalculator/internal/pkg/config"
 	"CaloriesCalculator/internal/service"
@@ -45,8 +44,9 @@ func main() {
 	}
 
 	userStorage := postgres.NewUserStorage(postgresPool)
+	productStorage := postgres.NewProductStorage(postgresPool)
 
-	service := service.New(userStorage)
+	service := service.New(userStorage, productStorage)
 
 	defer func() {
 		service.Close()
@@ -57,11 +57,12 @@ func main() {
 		slog.ErrorContext(mylog.ErrToContext(ctx, err), err.Error())
 		os.Exit(1)
 	}
+	slog.Info("service initialized")
 
-	app := http.New(service)
+	/*app := http.New(service)
 	if err := app.Run(ctx, cfg.Server); err != nil {
 		slog.ErrorContext(mylog.ErrToContext(ctx, err), err.Error())
-	}
+	}*/
 
-	//service.Test(ctx)
+	service.TestProduct(ctx)
 }

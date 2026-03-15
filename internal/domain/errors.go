@@ -17,8 +17,13 @@ func ExtractErr(err error) (error, bool) {
 var (
 	ErrUserAlreadyExists     = &Err{msg: "user already exists"}
 	ErrInvalidUserOrPassword = &Err{msg: "invalid user or password"}
+	ErrUserNotExists         = &Err{msg: "user not exists"}
 
-	ErrPaswordTooLong = &Err{msg: "password is too long"}
+	ErrProductAlreadyExists = &Err{msg: "product already exists"}
+	ErrProductNotExists     = &Err{msg: "product not exists"}
+
+	ErrPaswordTooLong   = &Err{msg: "password is too long"}
+	ErrUsernameTooShort = &Err{msg: "username is too short"}
 
 	ErrInvalidAccessToken = &Err{msg: "invalid access token"}
 

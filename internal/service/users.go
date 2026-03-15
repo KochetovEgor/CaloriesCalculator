@@ -10,6 +10,11 @@ import (
 func (s *Service) AuthUser(ctx context.Context, username, password string) (string, error) {
 	logger := mylog.FromContext(ctx)
 
+	if err := validateUsernameAndPWD(username, password); err != nil {
+		logger.Info(err.Error())
+		return "", err
+	}
+
 	user, err := s.userStorage.Select(ctx, username)
 	if err != nil {
 		err = convertErrAndLog(ctx, logger, "error selecting user", err)
@@ -37,7 +42,7 @@ func (s *Service) AuthUser(ctx context.Context, username, password string) (stri
 func (s *Service) RegisterUser(ctx context.Context, username, password string) (domain.User, error) {
 	logger := mylog.FromContext(ctx)
 
-	if err := validatePassword(password); err != nil {
+	if err := validateUsernameAndPWD(username, password); err != nil {
 		logger.Info(err.Error())
 		return domain.User{}, err
 	}

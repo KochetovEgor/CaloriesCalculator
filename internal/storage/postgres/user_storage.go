@@ -86,14 +86,14 @@ WHERE username = $1;
 `
 
 // Delete deletes user from storage.
-func (s *UserStorage) Delete(ctx context.Context, username string) error {
+func (s *UserStorage) Delete(ctx context.Context, user domain.User) error {
 	attrs := []any{
 		"table", tableUsersName,
-		"username", username,
+		"username", user.Username,
 	}
 	logger := mylog.FromContext(ctx).With(attrs...)
 
-	_, err := s.pool.Exec(ctx, deleteUserFromUsers, username)
+	_, err := s.pool.Exec(ctx, deleteUserFromUsers, user.Username)
 	if err != nil {
 		err = mylog.WrapError(err, attrs...)
 		return fmt.Errorf("error deleting user from table: %w", err)
