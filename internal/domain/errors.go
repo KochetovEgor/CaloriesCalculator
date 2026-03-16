@@ -15,17 +15,27 @@ func ExtractErr(err error) (error, bool) {
 }
 
 var (
+	// User errors
 	ErrUserAlreadyExists     = &Err{msg: "user already exists"}
 	ErrInvalidUserOrPassword = &Err{msg: "invalid user or password"}
 	ErrUserNotExists         = &Err{msg: "user not exists"}
 
-	ErrProductAlreadyExists = &Err{msg: "product already exists"}
-	ErrProductNotExists     = &Err{msg: "product not exists"}
-
+	// Validation User errors
 	ErrPaswordTooLong   = &Err{msg: "password is too long"}
 	ErrUsernameTooShort = &Err{msg: "username is too short"}
 
-	ErrInvalidAccessToken = &Err{msg: "invalid access token"}
+	// Product errors
+	ErrProductAlreadyExists = &Err{msg: "product already exists"}
+	ErrProductNotExists     = &Err{msg: "product not exists"}
 
-	ErrInternal = &Err{msg: "internal error"}
+	//Validation Product errors
+	ErrBaseWeightMustBePositive    = &Err{msg: "base weight must be positive"}
+	ErrBasePortionMustBePositive   = &Err{msg: "base portion must be positive"}
+	ErrFatsMustBePositive          = &Err{msg: "fats must be positive"}
+	ErrProteinsMustBePositive      = &Err{msg: "proteins must be positive"}
+	ErrCarbohydratesMustBePositive = &Err{msg: "carbohydrates must be positive"}
+
+	// Other errors
+	ErrInvalidAccessToken = &Err{msg: "invalid access token"}
+	ErrInternal           = &Err{msg: "internal error"}
 )

@@ -12,13 +12,13 @@ func (u User) LogValue() slog.Value {
 }
 
 type Product struct {
-	Username     string
-	Name         string
-	BaseWeight   float64
-	BasePortion  float64
-	Fat          float64
-	Protein      float64
-	Carbohydrate float64
+	Username      string
+	Name          string
+	BaseWeight    float64
+	BasePortion   float64
+	Fats          float64
+	Proteins      float64
+	Carbohydrates float64
 }
 
 func (p Product) LogValue() slog.Value {
