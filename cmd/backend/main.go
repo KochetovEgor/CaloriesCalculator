@@ -1,6 +1,7 @@
 package main
 
 import (
+	"CaloriesCalculator/internal/controller/http"
 	"CaloriesCalculator/internal/pkg/auth"
 	"CaloriesCalculator/internal/pkg/config"
 	"CaloriesCalculator/internal/service"
@@ -59,10 +60,10 @@ func main() {
 	}
 	slog.Info("service initialized")
 
-	/*app := http.New(service)
+	app := http.New(service)
 	if err := app.Run(ctx, cfg.Server); err != nil {
 		slog.ErrorContext(mylog.ErrToContext(ctx, err), err.Error())
-	}*/
+	}
 
-	service.TestProduct(ctx)
+	//service.TestProduct(ctx)
 }

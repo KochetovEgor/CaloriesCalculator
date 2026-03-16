@@ -22,6 +22,7 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 	mux.Handle("/", authMiddleware(a.Test))
 	mux.HandleFunc("POST /login", a.Login)
 	mux.HandleFunc("POST /register", a.Register)
+	mux.Handle("POST /product/add", authMiddleware(a.ProductAdd))
 
 	handler := logMiddleware(mux)
 
@@ -42,11 +43,6 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 
 func (a *App) Test(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	logger := mylog.FromContext(ctx)
-	user, ok := getUserFromContext(ctx)
-	if !ok {
-		errorWithLog(w, "invalid user", http.StatusBadRequest, logger)
-		return
-	}
+	user := getUserFromContext(ctx)
 	fmt.Fprintf(w, "Hello world %s\n", user)
 }

@@ -48,9 +48,11 @@ func putUserToContext(ctx context.Context, user domain.User) context.Context {
 	return context.WithValue(ctx, userContextKey, user)
 }
 
-func getUserFromContext(ctx context.Context) (domain.User, bool) {
-	user, ok := ctx.Value(userContextKey).(domain.User)
-	return user, ok
+func getUserFromContext(ctx context.Context) domain.User {
+	if user, ok := ctx.Value(userContextKey).(domain.User); ok {
+		return user
+	}
+	return domain.User{}
 }
 
 func authMiddleware(next http.HandlerFunc) http.Handler {
@@ -61,7 +63,7 @@ func authMiddleware(next http.HandlerFunc) http.Handler {
 
 		const bearerPrefix = "Bearer "
 		if authHeader == "" || !strings.HasPrefix(authHeader, bearerPrefix) {
-			errorWithLog(w, "missing access token", http.StatusUnauthorized, logger)
+			ErrorResp(w, errMissingAccessToken, http.StatusUnauthorized, logger)
 			return
 		}
 
@@ -69,7 +71,7 @@ func authMiddleware(next http.HandlerFunc) http.Handler {
 
 		user, err := auth.GetUserFromToken(rawToken)
 		if err != nil {
-			errorWithLog(w, "Invalid or expired token", http.StatusUnauthorized, logger)
+			ErrorResp(w, errInvalidOrExpiredToken, http.StatusUnauthorized, logger)
 			return
 		}
 

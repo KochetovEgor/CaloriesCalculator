@@ -18,7 +18,7 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 
 	username, password, ok := r.BasicAuth()
 	if !ok {
-		errorWithLog(w, "Unauthorized", http.StatusUnauthorized, logger)
+		ErrorResp(w, errUnauthorized, http.StatusUnauthorized, logger)
 		return
 	}
 
@@ -31,7 +31,7 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 			statusCcode = http.StatusUnauthorized
 			w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
 		}
-		errorWithLog(w, err.Error(), statusCcode, logger)
+		ErrorResp(w, err, statusCcode, logger)
 		return
 	}
 
@@ -57,7 +57,7 @@ func (a *App) Register(w http.ResponseWriter, r *http.Request) {
 	userReq := &registerRequest{}
 	err := json.NewDecoder(r.Body).Decode(userReq)
 	if err != nil {
-		errorWithLog(w, "invalid request body", http.StatusBadRequest, logger)
+		ErrorResp(w, errInvalidRequestBody, http.StatusBadRequest, logger)
 		return
 	}
 
@@ -69,7 +69,7 @@ func (a *App) Register(w http.ResponseWriter, r *http.Request) {
 		} else {
 			statusCode = http.StatusUnauthorized
 		}
-		errorWithLog(w, err.Error(), statusCode, logger)
+		ErrorResp(w, err, statusCode, logger)
 		return
 	}
 
