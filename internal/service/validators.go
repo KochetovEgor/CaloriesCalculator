@@ -5,13 +5,30 @@ import (
 	"CaloriesCalculator/pkg/myerrors"
 )
 
-func validateUsernameAndPWD(username string, password string) error {
-	var errs []error
+func validateUsername(username string) error {
 	if len([]rune(username)) < 3 {
-		errs = append(errs, domain.ErrUsernameTooShort)
+		return domain.ErrUsernameTooShort
+	}
+	return nil
+}
+
+func validatePassword(password string) error {
+	if len([]rune(password)) < 3 {
+		return domain.ErrPasswordTooShort
 	}
 	if len(password) > 72 {
-		errs = append(errs, domain.ErrPaswordTooLong)
+		return domain.ErrPaswordTooLong
+	}
+	return nil
+}
+
+func validateUsernameAndPWD(username string, password string) error {
+	var errs []error
+	if err := validateUsername(username); err != nil {
+		errs = append(errs, err)
+	}
+	if err := validatePassword(password); err != nil {
+		errs = append(errs, err)
 	}
 
 	if errs != nil {
@@ -22,8 +39,8 @@ func validateUsernameAndPWD(username string, password string) error {
 
 func validateProduct(product domain.Product) error {
 	var errs []error
-	if len([]rune(product.Username)) < 3 {
-		errs = append(errs, domain.ErrUsernameTooShort)
+	if err := validateUsername(product.Username); err != nil {
+		errs = append(errs, err)
 	}
 	if product.BaseWeight < 0 {
 		errs = append(errs, domain.ErrBaseWeightMustBePositive)

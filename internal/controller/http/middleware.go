@@ -76,6 +76,7 @@ func authMiddleware(next http.HandlerFunc) http.Handler {
 		}
 
 		ctx := putUserToContext(r.Context(), user)
+		ctx = mylog.NewContext(ctx, logger.With("user", user))
 		next(w, r.WithContext(ctx))
 	})
 }

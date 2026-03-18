@@ -23,6 +23,9 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 	mux.HandleFunc("POST /login", a.Login)
 	mux.HandleFunc("POST /register", a.Register)
 	mux.Handle("POST /product/add", authMiddleware(a.ProductAdd))
+	mux.Handle("DELETE /product/delete", authMiddleware(a.ProductDelete))
+	mux.Handle("PUT /product/update", authMiddleware(a.ProductUpdate))
+	mux.Handle("GET /product", authMiddleware(a.Product))
 
 	handler := logMiddleware(mux)
 

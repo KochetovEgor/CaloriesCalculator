@@ -151,7 +151,7 @@ WHERE
 	username = $1;
 `
 
-func (s *ProductStorage) SelectAll(ctx context.Context,
+func (s *ProductStorage) SelectByUser(ctx context.Context,
 	username string) ([]domain.Product, error) {
 	attrs := []any{
 		"table", tableProductsName,

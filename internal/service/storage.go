@@ -19,5 +19,5 @@ type ProductStorage interface {
 	Add(ctx context.Context, product domain.Product) error
 	Delete(ctx context.Context, username, productName string) error
 	Update(ctx context.Context, product domain.Product) error
-	SelectAll(ctx context.Context, username string) ([]domain.Product, error)
+	SelectByUser(ctx context.Context, username string) ([]domain.Product, error)
 }

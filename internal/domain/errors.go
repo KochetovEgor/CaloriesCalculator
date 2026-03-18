@@ -22,6 +22,7 @@ var (
 
 	// Validation User errors
 	ErrPaswordTooLong   = &Err{msg: "password is too long"}
+	ErrPasswordTooShort = &Err{msg: "password too short"}
 	ErrUsernameTooShort = &Err{msg: "username is too short"}
 
 	// Product errors
