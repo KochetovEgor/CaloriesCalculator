@@ -1,4 +1,4 @@
-// auth is package for creating bcrypt hash of passwords and validating JWT
+// auth is package for creating bcrypt hash of passwords and validating JWT.
 package auth
 
 import (
