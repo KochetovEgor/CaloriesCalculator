@@ -63,7 +63,6 @@ VALUES ($1, $2);
 func (s *UserStorage) Add(ctx context.Context, user domain.User) error {
 	attrs := []any{
 		"table", tableUsersName,
-		"user", user,
 	}
 	logger := mylog.FromContext(ctx).With(attrs...)
 
@@ -104,7 +103,7 @@ func (s *UserStorage) Delete(ctx context.Context, user domain.User) error {
 
 const selectUserFromUsers = `
 SELECT
-	username, hashed_password
+	id, username, hashed_password
 FROM users
 WHERE username = $1;
 `
@@ -119,7 +118,7 @@ func (s *UserStorage) Select(ctx context.Context, username string) (domain.User,
 
 	var user domain.User
 	err := s.pool.QueryRow(ctx, selectUserFromUsers, username).Scan(
-		&user.Username, &user.HashPassword)
+		&user.Id, &user.Username, &user.HashPassword)
 	if err != nil {
 		if isNoRows(err) {
 			return user, domain.ErrInvalidUserOrPassword

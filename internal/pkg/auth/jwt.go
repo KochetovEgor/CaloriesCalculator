@@ -76,7 +76,8 @@ func GetUserFromToken(accessToken string) (domain.User, error) {
 		return user, err
 	}
 
-	user.Id, _ = claims["user_id"].(int)
+	id, _ := claims["user_id"].(float64)
+	user.Id = int(id)
 	user.Username, _ = claims["user_name"].(string)
 	return user, nil
 }

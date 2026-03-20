@@ -6,33 +6,40 @@ import (
 	"context"
 )
 
-func (s *Service) AddProduct(ctx context.Context, product domain.Product) (domain.Product, error) {
-	logger := mylog.FromContext(ctx)
+func (s *Service) AddProduct(ctx context.Context,
+	user domain.User, product domain.Product) (domain.Product, error) {
+	logger := mylog.FromContext(ctx).With("user", user, "product", product)
+	ctx = mylog.NewContext(ctx, logger)
+
+	if err := validateUser(user); err != nil {
+		logger.Info(err.Error())
+		return domain.Product{}, err
+	}
 
 	if err := validateProduct(product); err != nil {
 		logger.Info(err.Error())
 		return domain.Product{}, err
 	}
 
-	if err := s.productStorage.Add(ctx, product); err != nil {
+	if err := s.productStorage.Add(ctx, user, product); err != nil {
 		err = convertErrAndLog(ctx, logger, "error adding product", err)
 		return domain.Product{}, err
 	}
-	logger = logger.With("product", product)
 	logger.Info("product added")
 
 	return product, nil
 }
 
-func (s *Service) DeleteProduct(ctx context.Context, username, productName string) error {
-	logger := mylog.FromContext(ctx)
+func (s *Service) DeleteProduct(ctx context.Context, user domain.User, productName string) error {
+	logger := mylog.FromContext(ctx).With("user", user, "product", productName)
+	ctx = mylog.NewContext(ctx, logger)
 
-	if err := validateUsername(username); err != nil {
+	if err := validateUser(user); err != nil {
 		logger.Info(err.Error())
 		return err
 	}
 
-	if err := s.productStorage.Delete(ctx, username, productName); err != nil {
+	if err := s.productStorage.Delete(ctx, user, productName); err != nil {
 		err = convertErrAndLog(ctx, logger, "error deleting product", err)
 		return err
 	}
@@ -42,34 +49,40 @@ func (s *Service) DeleteProduct(ctx context.Context, username, productName strin
 }
 
 func (s *Service) UpdateProduct(ctx context.Context,
-	product domain.Product) (domain.Product, error) {
-	logger := mylog.FromContext(ctx)
+	user domain.User, product domain.Product) (domain.Product, error) {
+	logger := mylog.FromContext(ctx).With("user", user, "product", product)
+	ctx = mylog.NewContext(ctx, logger)
+
+	if err := validateUser(user); err != nil {
+		logger.Info(err.Error())
+		return domain.Product{}, err
+	}
 
 	if err := validateProduct(product); err != nil {
 		logger.Info(err.Error())
 		return domain.Product{}, err
 	}
 
-	if err := s.productStorage.Update(ctx, product); err != nil {
+	if err := s.productStorage.Update(ctx, user, product); err != nil {
 		err = convertErrAndLog(ctx, logger, "error updating product", err)
 		return domain.Product{}, err
 	}
-	logger = logger.With("product", product)
 	logger.Info("product updated")
 
 	return product, nil
 }
 
 func (s *Service) SelectProductsByUser(ctx context.Context,
-	username string) ([]domain.Product, error) {
-	logger := mylog.FromContext(ctx)
+	user domain.User) ([]domain.Product, error) {
+	logger := mylog.FromContext(ctx).With("user", user)
+	ctx = mylog.NewContext(ctx, logger)
 
-	if err := validateUsername(username); err != nil {
+	if err := validateUser(user); err != nil {
 		logger.Info(err.Error())
 		return nil, err
 	}
 
-	products, err := s.productStorage.SelectByUser(ctx, username)
+	products, err := s.productStorage.SelectByUser(ctx, user)
 	if err != nil {
 		err = convertErrAndLog(ctx, logger, "error selecting products", err)
 		return nil, err

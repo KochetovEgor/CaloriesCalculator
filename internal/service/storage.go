@@ -16,8 +16,8 @@ type UserStorage interface {
 type ProductStorage interface {
 	Close() error
 	Init(ctx context.Context) error
-	Add(ctx context.Context, product domain.Product) error
-	Delete(ctx context.Context, username, productName string) error
-	Update(ctx context.Context, product domain.Product) error
-	SelectByUser(ctx context.Context, username string) ([]domain.Product, error)
+	Add(ctx context.Context, user domain.User, product domain.Product) error
+	Delete(ctx context.Context, user domain.User, productName string) error
+	Update(ctx context.Context, user domain.User, product domain.Product) error
+	SelectByUser(ctx context.Context, user domain.User) ([]domain.Product, error)
 }

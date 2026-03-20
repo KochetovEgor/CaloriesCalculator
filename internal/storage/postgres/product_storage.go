@@ -60,19 +60,18 @@ func (s *ProductStorage) Init(ctx context.Context) error {
 
 const addProductToProducts = `
 INSERT INTO products (user_id, name, base_weight, base_portion, fats, proteins, carbohydrates)
-	SELECT id, $2, $3, $4, $5, $6, $7 FROM users
-		WHERE username = $1;
+	VALUES ($1, $2, $3, $4, $5, $6, $7);
 `
 
-func (s *ProductStorage) Add(ctx context.Context, product domain.Product) error {
+func (s *ProductStorage) Add(ctx context.Context,
+	user domain.User, product domain.Product) error {
 	attrs := []any{
 		"table", tableProductsName,
-		"product", product,
 	}
 	logger := mylog.FromContext(ctx).With(attrs...)
 
 	ct, err := s.pool.Exec(ctx, addProductToProducts,
-		product.Username, product.Name, product.BaseWeight,
+		user.Id, product.Name, product.BaseWeight,
 		product.BasePortion, product.Fats, product.Proteins, product.Carbohydrates)
 	if err != nil {
 		if isUniqueViolation(err) {
@@ -85,30 +84,28 @@ func (s *ProductStorage) Add(ctx context.Context, product domain.Product) error 
 		return domain.ErrUserNotExists
 	}
 
-	logger.Debug("product added")
+	logger.Debug("product added in table")
 	return nil
 }
 
 const deleteProductFromProducts = `
 DELETE FROM products
-WHERE user_id = (SELECT id FROM users WHERE username = $1) AND name = $2;
+WHERE user_id = $1 AND name = $2;
 `
 
-func (s *ProductStorage) Delete(ctx context.Context, username, productName string) error {
+func (s *ProductStorage) Delete(ctx context.Context, user domain.User, productName string) error {
 	attrs := []any{
 		"table", tableProductsName,
-		"product name", productName,
-		"username", username,
 	}
 	logger := mylog.FromContext(ctx).With(attrs...)
 
-	_, err := s.pool.Exec(ctx, deleteProductFromProducts, username, productName)
+	_, err := s.pool.Exec(ctx, deleteProductFromProducts, user.Id, productName)
 	if err != nil {
 		err = mylog.WrapError(err, attrs...)
 		return fmt.Errorf("error deleting product from table: %w", err)
 	}
 
-	logger.Debug("product deleted")
+	logger.Debug("product deleted from table")
 	return nil
 }
 
@@ -117,17 +114,18 @@ UPDATE products SET
 	base_weight = $3, base_portion = $4,
 	fats = $5, proteins = $6, carbohydrates = $7
 WHERE 
-	user_id = (SELECT id FROM users WHERE username = $1) AND name = $2;
+	user_id = $1 AND name = $2;
 `
 
-func (s *ProductStorage) Update(ctx context.Context, product domain.Product) error {
+func (s *ProductStorage) Update(ctx context.Context,
+	user domain.User, product domain.Product) error {
 	attrs := []any{
 		"table", tableProductsName,
 	}
 	logger := mylog.FromContext(ctx).With(attrs...)
 
 	ct, err := s.pool.Exec(ctx, updateProductFromProducts,
-		product.Username, product.Name, product.BaseWeight, product.BasePortion,
+		user.Id, product.Name, product.BaseWeight, product.BasePortion,
 		product.Fats, product.Proteins, product.Carbohydrates)
 	if err != nil {
 		err = mylog.WrapError(err, attrs...)
@@ -137,29 +135,27 @@ func (s *ProductStorage) Update(ctx context.Context, product domain.Product) err
 		return domain.ErrProductNotExists
 	}
 
-	logger.Debug("product updated")
+	logger.Debug("product updated in table")
 	return nil
 }
 
 const selectProductFromProducts = `
 SELECT 
-	username, name, base_weight, base_portion, fats, proteins, carbohydrates
+	name, base_weight, base_portion, fats, proteins, carbohydrates
 FROM 
 	products
-	JOIN users ON user_id = users.id
-WHERE 
-	username = $1;
+WHERE
+	user_id = $1;
 `
 
 func (s *ProductStorage) SelectByUser(ctx context.Context,
-	username string) ([]domain.Product, error) {
+	user domain.User) ([]domain.Product, error) {
 	attrs := []any{
 		"table", tableProductsName,
-		"username", username,
 	}
 	logger := mylog.FromContext(ctx).With(attrs...)
 
-	rows, _ := s.pool.Query(ctx, selectProductFromProducts, username)
+	rows, _ := s.pool.Query(ctx, selectProductFromProducts, user.Id)
 	products, err := pgx.CollectRows(rows, pgx.RowToStructByName[domain.Product])
 	if err != nil {
 		err = mylog.WrapError(err, attrs...)

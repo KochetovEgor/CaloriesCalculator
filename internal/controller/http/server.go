@@ -47,5 +47,5 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 func (a *App) Test(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	user := getUserFromContext(ctx)
-	fmt.Fprintf(w, "Hello world %s\n", user)
+	fmt.Fprintf(w, "Hello world %v\n", user)
 }

@@ -55,6 +55,7 @@ func (s *Service) RegisterUser(ctx context.Context, username, password string) (
 
 	user := domain.User{Username: username, HashPassword: hashPassword}
 	logger = logger.With("user", user)
+	ctx = mylog.NewContext(ctx, logger)
 
 	if err := s.userStorage.Add(ctx, user); err != nil {
 		err = convertErrAndLog(ctx, logger, "error adding user", err)

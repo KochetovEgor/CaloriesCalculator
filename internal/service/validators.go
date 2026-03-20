@@ -37,11 +37,12 @@ func validateUsernameAndPWD(username string, password string) error {
 	return nil
 }
 
+func validateUser(user domain.User) error {
+	return validateUsername(user.Username)
+}
+
 func validateProduct(product domain.Product) error {
 	var errs []error
-	if err := validateUsername(product.Username); err != nil {
-		errs = append(errs, err)
-	}
 	if product.BaseWeight < 0 {
 		errs = append(errs, domain.ErrBaseWeightMustBePositive)
 	}

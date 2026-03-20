@@ -26,22 +26,14 @@ func (a *App) ProductAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := &productAddRequest{}
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+	req := productAddRequest{}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		ErrorResp(w, errInvalidRequestBody, http.StatusBadRequest, logger)
 		return
 	}
 	user := getUserFromContext(ctx)
 
-	product, err := a.service.AddProduct(ctx, domain.Product{
-		Username:      user.Username,
-		Name:          req.Name,
-		BaseWeight:    req.BaseWeight,
-		BasePortion:   req.BasePortion,
-		Fats:          req.Fats,
-		Proteins:      req.Proteins,
-		Carbohydrates: req.Carbohydrates,
-	})
+	product, err := a.service.AddProduct(ctx, user, domain.Product(req))
 	if err != nil {
 		var statusCode int
 		if errors.Is(err, domain.ErrInternal) {
@@ -56,14 +48,7 @@ func (a *App) ProductAdd(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	json.NewEncoder(w).Encode(productAddRequest{
-		Name:          product.Name,
-		BaseWeight:    product.BaseWeight,
-		BasePortion:   product.BasePortion,
-		Fats:          product.Fats,
-		Proteins:      product.Proteins,
-		Carbohydrates: product.Carbohydrates,
-	})
+	json.NewEncoder(w).Encode(productAddRequest(product))
 }
 
 type productDeleteRequest struct {
@@ -86,7 +71,7 @@ func (a *App) ProductDelete(w http.ResponseWriter, r *http.Request) {
 	}
 	user := getUserFromContext(ctx)
 
-	if err := a.service.DeleteProduct(ctx, user.Username, req.Name); err != nil {
+	if err := a.service.DeleteProduct(ctx, user, req.Name); err != nil {
 		var statusCode int
 		if errors.Is(err, domain.ErrInternal) {
 			statusCode = http.StatusInternalServerError
@@ -119,22 +104,14 @@ func (a *App) ProductUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := &productUpdateRequest{}
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+	req := productUpdateRequest{}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		ErrorResp(w, errInvalidRequestBody, http.StatusBadRequest, logger)
 		return
 	}
 	user := getUserFromContext(ctx)
 
-	product, err := a.service.UpdateProduct(ctx, domain.Product{
-		Username:      user.Username,
-		Name:          req.Name,
-		BaseWeight:    req.BaseWeight,
-		BasePortion:   req.BasePortion,
-		Fats:          req.Fats,
-		Proteins:      req.Proteins,
-		Carbohydrates: req.Carbohydrates,
-	})
+	product, err := a.service.UpdateProduct(ctx, user, domain.Product(req))
 	if err != nil {
 		var statusCode int
 		if errors.Is(err, domain.ErrInternal) {
@@ -149,14 +126,7 @@ func (a *App) ProductUpdate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	json.NewEncoder(w).Encode(productUpdateRequest{
-		Name:          product.Name,
-		BaseWeight:    product.BaseWeight,
-		BasePortion:   product.BasePortion,
-		Fats:          product.Fats,
-		Proteins:      product.Proteins,
-		Carbohydrates: product.Carbohydrates,
-	})
+	json.NewEncoder(w).Encode(productUpdateRequest(product))
 }
 
 type productResponse struct {
@@ -174,7 +144,7 @@ func (a *App) Product(w http.ResponseWriter, r *http.Request) {
 
 	user := getUserFromContext(ctx)
 
-	products, err := a.service.SelectProductsByUser(ctx, user.Username)
+	products, err := a.service.SelectProductsByUser(ctx, user)
 	if err != nil {
 		var statusCode int
 		if errors.Is(err, domain.ErrInternal) {

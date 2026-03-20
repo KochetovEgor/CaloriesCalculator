@@ -16,7 +16,6 @@ func (u User) LogValue() slog.Value {
 }
 
 type Product struct {
-	Username      string
 	Name          string
 	BaseWeight    float64
 	BasePortion   float64
@@ -26,8 +25,5 @@ type Product struct {
 }
 
 func (p Product) LogValue() slog.Value {
-	return slog.GroupValue(
-		slog.Any("username", p.Username),
-		slog.String("name", p.Name),
-	)
+	return slog.StringValue(p.Name)
 }
