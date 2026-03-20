@@ -12,6 +12,7 @@ type productAddRequest struct {
 	Name          string  `json:"name"`
 	BaseWeight    float64 `json:"base_weight"`
 	BasePortion   float64 `json:"base_portion"`
+	Calories      float64 `json:"calories"`
 	Fats          float64 `json:"fats"`
 	Proteins      float64 `json:"proteins"`
 	Carbohydrates float64 `json:"carbohydrates"`
@@ -90,6 +91,7 @@ type productUpdateRequest struct {
 	Name          string  `json:"name"`
 	BaseWeight    float64 `json:"base_weight"`
 	BasePortion   float64 `json:"base_portion"`
+	Calories      float64 `json:"calories"`
 	Fats          float64 `json:"fats"`
 	Proteins      float64 `json:"proteins"`
 	Carbohydrates float64 `json:"carbohydrates"`
@@ -133,6 +135,7 @@ type productResponse struct {
 	Name          string  `json:"name"`
 	BaseWeight    float64 `json:"base_weight"`
 	BasePortion   float64 `json:"base_portion"`
+	Calories      float64 `json:"calories"`
 	Fats          float64 `json:"fats"`
 	Proteins      float64 `json:"proteins"`
 	Carbohydrates float64 `json:"carbohydrates"`
@@ -165,6 +168,7 @@ func (a *App) Product(w http.ResponseWriter, r *http.Request) {
 			Name:          p.Name,
 			BaseWeight:    p.BaseWeight,
 			BasePortion:   p.BasePortion,
+			Calories:      p.Calories,
 			Fats:          p.Fats,
 			Proteins:      p.Proteins,
 			Carbohydrates: p.Carbohydrates,

@@ -43,11 +43,14 @@ func validateUser(user domain.User) error {
 
 func validateProduct(product domain.Product) error {
 	var errs []error
-	if product.BaseWeight < 0 {
-		errs = append(errs, domain.ErrBaseWeightMustBePositive)
+	if product.BaseWeight <= 0 {
+		errs = append(errs, domain.ErrBaseWeightMustBeGreaterThanZero)
 	}
 	if product.BasePortion < 0 {
 		errs = append(errs, domain.ErrBasePortionMustBePositive)
+	}
+	if product.Calories < 0 {
+		errs = append(errs, domain.ErrCaloriesMustBePostitve)
 	}
 	if product.Fats < 0 {
 		errs = append(errs, domain.ErrFatsMustBePositive)

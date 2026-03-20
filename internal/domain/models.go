@@ -19,6 +19,7 @@ type Product struct {
 	Name          string
 	BaseWeight    float64
 	BasePortion   float64
+	Calories      float64
 	Fats          float64
 	Proteins      float64
 	Carbohydrates float64

@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS products (
 	name TEXT NOT NULL,
 	base_weight NUMERIC NOT NULL,
 	base_portion NUMERIC NOT NULL DEFAULT 0.00,
+	calories NUMERIC NOT NULL,
 	fats NUMERIC NOT NULL,
 	proteins NUMERIC NOT NULL,
 	carbohydrates NUMERIC NOT NULL,
@@ -59,8 +60,9 @@ func (s *ProductStorage) Init(ctx context.Context) error {
 }
 
 const addProductToProducts = `
-INSERT INTO products (user_id, name, base_weight, base_portion, fats, proteins, carbohydrates)
-	VALUES ($1, $2, $3, $4, $5, $6, $7);
+INSERT INTO products (user_id, name, base_weight, base_portion,
+	calories, fats, proteins, carbohydrates)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
 `
 
 func (s *ProductStorage) Add(ctx context.Context,
@@ -71,8 +73,8 @@ func (s *ProductStorage) Add(ctx context.Context,
 	logger := mylog.FromContext(ctx).With(attrs...)
 
 	ct, err := s.pool.Exec(ctx, addProductToProducts,
-		user.Id, product.Name, product.BaseWeight,
-		product.BasePortion, product.Fats, product.Proteins, product.Carbohydrates)
+		user.Id, product.Name, product.BaseWeight, product.BasePortion,
+		product.Calories, product.Fats, product.Proteins, product.Carbohydrates)
 	if err != nil {
 		if isUniqueViolation(err) {
 			return domain.ErrProductAlreadyExists
@@ -112,7 +114,7 @@ func (s *ProductStorage) Delete(ctx context.Context, user domain.User, productNa
 const updateProductFromProducts = `
 UPDATE products SET
 	base_weight = $3, base_portion = $4,
-	fats = $5, proteins = $6, carbohydrates = $7
+	calories = $5, fats = $6, proteins = $7, carbohydrates = $8
 WHERE 
 	user_id = $1 AND name = $2;
 `
@@ -126,7 +128,7 @@ func (s *ProductStorage) Update(ctx context.Context,
 
 	ct, err := s.pool.Exec(ctx, updateProductFromProducts,
 		user.Id, product.Name, product.BaseWeight, product.BasePortion,
-		product.Fats, product.Proteins, product.Carbohydrates)
+		product.Calories, product.Fats, product.Proteins, product.Carbohydrates)
 	if err != nil {
 		err = mylog.WrapError(err, attrs...)
 		return fmt.Errorf("error updating product in table: %w", err)
@@ -141,7 +143,7 @@ func (s *ProductStorage) Update(ctx context.Context,
 
 const selectProductFromProducts = `
 SELECT 
-	name, base_weight, base_portion, fats, proteins, carbohydrates
+	name, base_weight, base_portion, calories, fats, proteins, carbohydrates
 FROM 
 	products
 WHERE
