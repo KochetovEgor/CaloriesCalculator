@@ -3,6 +3,7 @@ package service
 import (
 	"CaloriesCalculator/internal/domain"
 	"CaloriesCalculator/internal/pkg/auth"
+	"CaloriesCalculator/internal/service/validate"
 	"CaloriesCalculator/pkg/mylog"
 	"context"
 )
@@ -10,7 +11,7 @@ import (
 func (s *Service) AuthUser(ctx context.Context, username, password string) (string, error) {
 	logger := mylog.FromContext(ctx)
 
-	if err := validateUsernameAndPWD(username, password); err != nil {
+	if err := validate.UsernameAndPassword(username, password); err != nil {
 		logger.Info(err.Error())
 		return "", err
 	}
@@ -42,7 +43,7 @@ func (s *Service) AuthUser(ctx context.Context, username, password string) (stri
 func (s *Service) RegisterUser(ctx context.Context, username, password string) (domain.User, error) {
 	logger := mylog.FromContext(ctx)
 
-	if err := validateUsernameAndPWD(username, password); err != nil {
+	if err := validate.UsernameAndPassword(username, password); err != nil {
 		logger.Info(err.Error())
 		return domain.User{}, err
 	}
