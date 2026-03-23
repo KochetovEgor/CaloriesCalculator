@@ -46,8 +46,9 @@ func main() {
 
 	userStorage := postgres.NewUserStorage(postgresPool)
 	productStorage := postgres.NewProductStorage(postgresPool)
+	rationStorage := postgres.NewRationStorage(postgresPool)
 
-	service := service.New(userStorage, productStorage)
+	service := service.New(userStorage, productStorage, rationStorage)
 
 	defer func() {
 		service.Close()

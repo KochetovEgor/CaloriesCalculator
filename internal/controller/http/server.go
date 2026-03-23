@@ -20,12 +20,16 @@ func New(service *service.Service) *App {
 func (a *App) Run(ctx context.Context, cfg config.Server) error {
 	mux := http.NewServeMux()
 	mux.Handle("/", authMiddleware(a.Test))
+
 	mux.HandleFunc("POST /login", a.Login)
 	mux.HandleFunc("POST /register", a.Register)
+
 	mux.Handle("POST /product/add", authMiddleware(a.ProductAdd))
 	mux.Handle("DELETE /product/delete", authMiddleware(a.ProductDelete))
 	mux.Handle("PUT /product/update", authMiddleware(a.ProductUpdate))
 	mux.Handle("GET /product", authMiddleware(a.Product))
+
+	mux.Handle("POST /ration/add", authMiddleware(a.RationAdd))
 
 	handler := logMiddleware(mux)
 
