@@ -21,3 +21,10 @@ type ProductStorage interface {
 	Update(ctx context.Context, user domain.User, product domain.Product) error
 	SelectByUser(ctx context.Context, user domain.User) ([]domain.Product, error)
 }
+
+type RationStorage interface {
+	Close() error
+	Init(ctx context.Context) error
+	AddNewRation(ctx context.Context, user domain.User, ration domain.Ration) (int, error)
+	AddProductsEaten(ctx context.Context, user domain.User, rationId int, productsEaten []domain.ProductEaten) error
+}

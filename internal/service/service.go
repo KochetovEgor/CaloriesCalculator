@@ -10,10 +10,14 @@ import (
 type Service struct {
 	userStorage    UserStorage
 	productStorage ProductStorage
+	rationStorage  RationStorage
 }
 
-func New(userStorage UserStorage, productStorage ProductStorage) *Service {
-	return &Service{userStorage: userStorage, productStorage: productStorage}
+func New(userStorage UserStorage, productStorage ProductStorage,
+	rationStorage RationStorage) *Service {
+	return &Service{userStorage: userStorage,
+		productStorage: productStorage,
+		rationStorage:  rationStorage}
 }
 
 // Close closes all storages.
@@ -22,6 +26,9 @@ func (s *Service) Close() error {
 		return err
 	}
 	if err := s.productStorage.Close(); err != nil {
+		return err
+	}
+	if err := s.rationStorage.Close(); err != nil {
 		return err
 	}
 	return nil
@@ -33,6 +40,9 @@ func (s *Service) Init(ctx context.Context) error {
 		return fmt.Errorf("error initializing service: %w", err)
 	}
 	if err := s.productStorage.Init(ctx); err != nil {
+		return fmt.Errorf("error initializing service: %w", err)
+	}
+	if err := s.rationStorage.Init(ctx); err != nil {
 		return fmt.Errorf("error initializing service: %w", err)
 	}
 	return nil

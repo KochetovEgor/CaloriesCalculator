@@ -3,6 +3,7 @@ package validate
 import (
 	"CaloriesCalculator/internal/domain"
 	"CaloriesCalculator/pkg/myerrors"
+	"fmt"
 )
 
 func UsernameAndPassword(username string, password string) error {
@@ -26,7 +27,7 @@ func User(user domain.User) error {
 
 func Product(product domain.Product) error {
 	var errs []error
-	if err := Weight(product.BaseWeight); err != nil {
+	if err := BaseWeight(product.BaseWeight); err != nil {
 		errs = append(errs, err)
 	}
 	if err := Portion(product.BasePortion); err != nil {
@@ -43,6 +44,35 @@ func Product(product domain.Product) error {
 	}
 	if err := Carbohydrates(product.Carbohydrates); err != nil {
 		errs = append(errs, err)
+	}
+
+	if errs != nil {
+		return myerrors.Join(errs...)
+	}
+	return nil
+}
+
+func ProductEatenSlice(productsEaten []domain.ProductEaten) error {
+	var errs []error
+	for _, p := range productsEaten {
+		if err := Weight(p.Weight); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %w", p.Name, err))
+		}
+		if err := Portion(p.Portion); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %w", p.Name, err))
+		}
+		if err := Calories(p.Calories); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %w", p.Name, err))
+		}
+		if err := Fats(p.Fats); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %w", p.Name, err))
+		}
+		if err := Proteins(p.Proteins); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %w", p.Name, err))
+		}
+		if err := Carbohydrates(p.Carbohydrates); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %w", p.Name, err))
+		}
 	}
 
 	if errs != nil {

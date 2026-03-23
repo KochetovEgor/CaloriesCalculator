@@ -2,7 +2,7 @@ package service
 
 import (
 	"CaloriesCalculator/internal/domain"
-	"CaloriesCalculator/internal/service/validate"
+	"CaloriesCalculator/internal/pkg/validate"
 	"CaloriesCalculator/pkg/mylog"
 	"context"
 )
@@ -11,11 +11,6 @@ func (s *Service) AddProduct(ctx context.Context,
 	user domain.User, product domain.Product) (domain.Product, error) {
 	logger := mylog.FromContext(ctx).With("user", user, "product", product)
 	ctx = mylog.NewContext(ctx, logger)
-
-	if err := validate.User(user); err != nil {
-		logger.Info(err.Error())
-		return domain.Product{}, err
-	}
 
 	if err := validate.Product(product); err != nil {
 		logger.Info(err.Error())
@@ -35,11 +30,6 @@ func (s *Service) DeleteProduct(ctx context.Context, user domain.User, productNa
 	logger := mylog.FromContext(ctx).With("user", user, "product", productName)
 	ctx = mylog.NewContext(ctx, logger)
 
-	if err := validate.User(user); err != nil {
-		logger.Info(err.Error())
-		return err
-	}
-
 	if err := s.productStorage.Delete(ctx, user, productName); err != nil {
 		err = convertErrAndLog(ctx, logger, "error deleting product", err)
 		return err
@@ -53,11 +43,6 @@ func (s *Service) UpdateProduct(ctx context.Context,
 	user domain.User, product domain.Product) (domain.Product, error) {
 	logger := mylog.FromContext(ctx).With("user", user, "product", product)
 	ctx = mylog.NewContext(ctx, logger)
-
-	if err := validate.User(user); err != nil {
-		logger.Info(err.Error())
-		return domain.Product{}, err
-	}
 
 	if err := validate.Product(product); err != nil {
 		logger.Info(err.Error())
@@ -77,11 +62,6 @@ func (s *Service) SelectProductsByUser(ctx context.Context,
 	user domain.User) ([]domain.Product, error) {
 	logger := mylog.FromContext(ctx).With("user", user)
 	ctx = mylog.NewContext(ctx, logger)
-
-	if err := validate.User(user); err != nil {
-		logger.Info(err.Error())
-		return nil, err
-	}
 
 	products, err := s.productStorage.SelectByUser(ctx, user)
 	if err != nil {

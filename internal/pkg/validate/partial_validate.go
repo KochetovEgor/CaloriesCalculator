@@ -19,9 +19,16 @@ func Password(password string) error {
 	return nil
 }
 
+func BaseWeight(baseWeight float64) error {
+	if baseWeight <= 0 {
+		return domain.ErrBaseWeightMustBeGreaterThanZero
+	}
+	return nil
+}
+
 func Weight(weight float64) error {
-	if weight <= 0 {
-		return domain.ErrWeightMustBeGreaterThanZero
+	if weight < 0 {
+		return domain.ErrWeightMustBePositive
 	}
 	return nil
 }

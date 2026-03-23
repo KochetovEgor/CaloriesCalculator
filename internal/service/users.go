@@ -3,7 +3,7 @@ package service
 import (
 	"CaloriesCalculator/internal/domain"
 	"CaloriesCalculator/internal/pkg/auth"
-	"CaloriesCalculator/internal/service/validate"
+	"CaloriesCalculator/internal/pkg/validate"
 	"CaloriesCalculator/pkg/mylog"
 	"context"
 )
