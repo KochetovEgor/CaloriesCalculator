@@ -50,3 +50,16 @@ func (s *Service) AddRation(ctx context.Context, user domain.User,
 
 	return ration, nil
 }
+
+func (s *Service) DeleteRation(ctx context.Context, user domain.User, date string) error {
+	logger := mylog.FromContext(ctx).With("user", user, "ration", date)
+	ctx = mylog.NewContext(ctx, logger)
+
+	if err := s.rationStorage.DeleteRation(ctx, user, date); err != nil {
+		err = convertErrAndLog(ctx, logger, "error deleting ration", err)
+		return err
+	}
+	logger.Info("ration deleted")
+
+	return nil
+}

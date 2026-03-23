@@ -67,3 +67,37 @@ func (a *App) RationAdd(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(rationAddResponse(ration))
 }
+
+type rationDeleteRequest struct {
+	Date string `json:"date"`
+}
+
+func (a *App) RationDelete(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	logger := mylog.FromContext(ctx)
+
+	if r.Header.Get("Content-Type") != "application/json" {
+		ErrorResp(w, errInvalidHeader, http.StatusUnsupportedMediaType, logger)
+		return
+	}
+
+	req := rationDeleteRequest{}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		ErrorResp(w, errInvalidRequestBody, http.StatusBadRequest, logger)
+		return
+	}
+	user := getUserFromContext(ctx)
+
+	if err := a.service.DeleteRation(ctx, user, req.Date); err != nil {
+		var statusCode int
+		if errors.Is(err, domain.ErrInternal) {
+			statusCode = http.StatusInternalServerError
+		} else {
+			statusCode = http.StatusBadRequest
+		}
+		ErrorResp(w, err, statusCode, logger)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}

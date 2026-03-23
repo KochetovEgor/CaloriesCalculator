@@ -91,3 +91,27 @@ func (s *RationStorage) AddNewRation(ctx context.Context,
 	logger.Debug("ration added")
 	return id, nil
 }
+
+const deleteRationFromRations = `
+DELETE FROM rations
+WHERE user_id = $1 AND date = $2;
+`
+
+func (s *RationStorage) DeleteRation(ctx context.Context, user domain.User, date string) error {
+	attrs := []any{
+		"table", tableRationName,
+	}
+	logger := mylog.FromContext(ctx).With(attrs...)
+
+	ct, err := s.pool.Exec(ctx, deleteRationFromRations, user.Id, date)
+	if err != nil {
+		err = mylog.WrapError(err, attrs...)
+		return fmt.Errorf("error deleting ration from table: %w", err)
+	}
+	if isNoAffectedRows(ct) {
+		return domain.ErrRationNotExists
+	}
+
+	logger.Debug("ration deleted")
+	return nil
+}
