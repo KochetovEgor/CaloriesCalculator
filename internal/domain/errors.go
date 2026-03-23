@@ -30,12 +30,16 @@ var (
 	ErrProductNotExists     = &Err{msg: "product not exists"}
 
 	//Validation Product errors
-	ErrWeightMustBeGreaterThanZero = &Err{msg: "weight must be greater than zero"}
-	ErrPortionMustBePositive       = &Err{msg: "portion must be positive"}
-	ErrCaloriesMustBePostitve      = &Err{msg: "calories must be positive"}
-	ErrFatsMustBePositive          = &Err{msg: "fats must be positive"}
-	ErrProteinsMustBePositive      = &Err{msg: "proteins must be positive"}
-	ErrCarbohydratesMustBePositive = &Err{msg: "carbohydrates must be positive"}
+	ErrBaseWeightMustBeGreaterThanZero = &Err{msg: "base weight must be greater than zero"}
+	ErrWeightMustBePositive            = &Err{msg: "weight must be positive"}
+	ErrPortionMustBePositive           = &Err{msg: "portion must be positive"}
+	ErrCaloriesMustBePostitve          = &Err{msg: "calories must be positive"}
+	ErrFatsMustBePositive              = &Err{msg: "fats must be positive"}
+	ErrProteinsMustBePositive          = &Err{msg: "proteins must be positive"}
+	ErrCarbohydratesMustBePositive     = &Err{msg: "carbohydrates must be positive"}
+
+	//Ration errors
+	ErrRationAlreadyExists = &Err{msg: "ration already exists"}
 
 	// Other errors
 	ErrInvalidAccessToken = &Err{msg: "invalid access token"}

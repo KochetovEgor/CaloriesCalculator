@@ -28,3 +28,29 @@ type Product struct {
 func (p Product) LogValue() slog.Value {
 	return slog.StringValue(p.Name)
 }
+
+type ProductEaten struct {
+	Name          string
+	Weight        float64
+	Portion       float64
+	Calories      float64
+	Fats          float64
+	Proteins      float64
+	Carbohydrates float64
+}
+
+func (pe ProductEaten) LogValue() slog.Value {
+	return slog.StringValue(pe.Name)
+}
+
+type Ration struct {
+	Date          string
+	Calories      float64
+	Fats          float64
+	Proteins      float64
+	Carbohydrates float64
+}
+
+func (r Ration) LogValue() slog.Value {
+	return slog.StringValue(r.Date)
+}
