@@ -40,6 +40,7 @@ var (
 
 	//Ration errors
 	ErrRationAlreadyExists = &Err{msg: "ration already exists"}
+	ErrRationNotExists     = &Err{msg: "ration not exists"}
 
 	// Other errors
 	ErrInvalidAccessToken = &Err{msg: "invalid access token"}

@@ -101,10 +101,13 @@ func (s *ProductStorage) Delete(ctx context.Context, user domain.User, productNa
 	}
 	logger := mylog.FromContext(ctx).With(attrs...)
 
-	_, err := s.pool.Exec(ctx, deleteProductFromProducts, user.Id, productName)
+	ct, err := s.pool.Exec(ctx, deleteProductFromProducts, user.Id, productName)
 	if err != nil {
 		err = mylog.WrapError(err, attrs...)
 		return fmt.Errorf("error deleting product from table: %w", err)
+	}
+	if isNoAffectedRows(ct) {
+		return domain.ErrProductNotExists
 	}
 
 	logger.Debug("product deleted from table")
