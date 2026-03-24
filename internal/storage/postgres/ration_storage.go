@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -146,4 +147,31 @@ func (s *RationStorage) UpdateRation(ctx context.Context,
 
 	logger.Debug("ration updated in table")
 	return id, nil
+}
+
+const selectRationsByUser = `
+SELECT
+	date::text, calories, fats, proteins, carbohydrates
+FROM
+	rations
+WHERE
+	user_id = $1;
+`
+
+func (s *RationStorage) SelectRationsByUser(ctx context.Context,
+	user domain.User) ([]domain.Ration, error) {
+	attrs := []any{
+		"table", tableRationName,
+	}
+	logger := mylog.FromContext(ctx).With(attrs...)
+
+	rows, _ := s.pool.Query(ctx, selectRationsByUser, user.Id)
+	rations, err := pgx.CollectRows(rows, pgx.RowToStructByName[domain.Ration])
+	if err != nil {
+		err = mylog.WrapError(err, attrs...)
+		return nil, fmt.Errorf("error selecting rations from table: %w", err)
+	}
+
+	logger.Debug("rations selected from table")
+	return rations, nil
 }
