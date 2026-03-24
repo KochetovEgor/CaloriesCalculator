@@ -161,3 +161,46 @@ func (a *App) RationUpdate(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(rationUpdateResponse(ration))
 }
+
+type rationResponse struct {
+	Date          string  `json:"date"`
+	Calories      float64 `json:"calories"`
+	Fats          float64 `json:"fats"`
+	Proteins      float64 `json:"proteins"`
+	Carbohydrates float64 `json:"carbohydrates"`
+}
+
+func (a *App) Ration(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	logger := mylog.FromContext(ctx)
+
+	user := getUserFromContext(ctx)
+
+	rations, err := a.service.SelectRationsByUser(ctx, user)
+	if err != nil {
+		var statusCode int
+		if errors.Is(err, domain.ErrInternal) {
+			statusCode = http.StatusInternalServerError
+		} else {
+			statusCode = http.StatusBadRequest
+		}
+		ErrorResp(w, err, statusCode, logger)
+		return
+	}
+
+	resp := make([]rationResponse, len(rations))
+	for i, r := range rations {
+		resp[i] = rationResponse{
+			Date:          r.Date,
+			Calories:      r.Calories,
+			Fats:          r.Fats,
+			Proteins:      r.Proteins,
+			Carbohydrates: r.Carbohydrates,
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(resp)
+}

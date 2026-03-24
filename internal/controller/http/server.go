@@ -32,6 +32,7 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 	mux.Handle("POST /ration/add", authMiddleware(a.RationAdd))
 	mux.Handle("DELETE /ration/delete", authMiddleware(a.RationDelete))
 	mux.Handle("PUT /ration/update", authMiddleware(a.RationUpdate))
+	mux.Handle("GET /ration", authMiddleware(a.Ration))
 
 	handler := logMiddleware(mux)
 
