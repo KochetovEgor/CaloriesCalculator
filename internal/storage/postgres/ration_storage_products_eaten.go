@@ -62,7 +62,8 @@ INSERT INTO products_eaten (ration_id, product_id, name, weight,
 		portion, calories, fats, proteins, carbohydrates)
 SELECT 
 	$2, products.id, arr.name, arr.weight, arr.portion,
-	arr.calories, arr.fats, arr.proteins, arr.carbohydrates
+	ROUND(arr.calories, 2), ROUND(arr.fats, 2), 
+	ROUND(arr.proteins, 2), ROUND(arr.carbohydrates, 2)
 FROM
 	UNNEST($3::text[], $4::numeric[], $5::numeric[], $6::numeric[], $7::numeric[],
 	$8::numeric[], $9::numeric[]) as arr(name, weight, portion, calories, 
@@ -87,7 +88,28 @@ func (s *RationStorage) AddProductsEaten(ctx context.Context,
 		err = mylog.WrapError(err, attrs...)
 		return fmt.Errorf("error adding products eaten to table: %w", err)
 	}
-	logger.Debug("products eaten added")
+	logger.Debug("products eaten added in table")
 
+	return nil
+}
+
+const deleteProductsEatenByRation = `
+DELETE FROM products_eaten
+WHERE ration_id = $1;
+`
+
+func (s *RationStorage) DeleteProductsEatenByRation(ctx context.Context, rationId int) error {
+	attrs := []any{
+		"table", tableProductsEatenName,
+	}
+	logger := mylog.FromContext(ctx).With(attrs...)
+
+	_, err := s.pool.Exec(ctx, deleteProductsEatenByRation, rationId)
+	if err != nil {
+		err = mylog.WrapError(err, attrs...)
+		return fmt.Errorf("error deleting products eaten from table: %w", err)
+	}
+
+	logger.Debug("products eaten delted from table")
 	return nil
 }
