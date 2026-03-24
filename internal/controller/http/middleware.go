@@ -42,7 +42,7 @@ func logMiddleware(next http.Handler) http.Handler {
 
 type contextKey string
 
-const userContextKey = "user"
+const userContextKey contextKey = "user"
 
 func putUserToContext(ctx context.Context, user domain.User) context.Context {
 	return context.WithValue(ctx, userContextKey, user)

@@ -65,6 +65,4 @@ func main() {
 	if err := app.Run(ctx, cfg.Server); err != nil {
 		slog.ErrorContext(mylog.ErrToContext(ctx, err), err.Error())
 	}
-
-	//service.TestProduct(ctx)
 }

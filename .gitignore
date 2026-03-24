@@ -1,4 +1,2 @@
 config/backend.json
 config/HS256key.txt
-
-internal/service/test_service.go

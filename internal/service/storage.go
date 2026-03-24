@@ -26,6 +26,9 @@ type RationStorage interface {
 	Close() error
 	Init(ctx context.Context) error
 	AddNewRation(ctx context.Context, user domain.User, ration domain.Ration) (int, error)
-	AddProductsEaten(ctx context.Context, user domain.User, rationId int, productsEaten []domain.ProductEaten) error
 	DeleteRation(ctx context.Context, user domain.User, date string) error
+	UpdateRation(ctx context.Context, user domain.User, ration domain.Ration) (int, error)
+
+	AddProductsEaten(ctx context.Context, user domain.User, rationId int, productsEaten []domain.ProductEaten) error
+	DeleteProductsEatenByRation(ctx context.Context, rationId int) error
 }
