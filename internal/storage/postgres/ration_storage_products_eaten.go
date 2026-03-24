@@ -58,18 +58,27 @@ func newArgSliceFromProductsEaten(productsEaten []domain.ProductEaten) argSliceP
 }
 
 const addProductsToProductsEaten = `
-INSERT INTO products_eaten (ration_id, product_id, name, weight,
+INSERT INTO products_eaten AS pe (ration_id, product_id, name, weight,
 		portion, calories, fats, proteins, carbohydrates)
 SELECT 
-	$2, products.id, arr.name, arr.weight, arr.portion,
-	ROUND(arr.calories, 2), ROUND(arr.fats, 2), 
-	ROUND(arr.proteins, 2), ROUND(arr.carbohydrates, 2)
+	$2, MIN(products.id), arr.name, SUM(arr.weight), SUM(arr.portion),
+	SUM(ROUND(arr.calories, 2)), SUM(ROUND(arr.fats, 2)), 
+	SUM(ROUND(arr.proteins, 2)), SUM(ROUND(arr.carbohydrates, 2))
 FROM
 	UNNEST($3::text[], $4::numeric[], $5::numeric[], $6::numeric[], $7::numeric[],
 	$8::numeric[], $9::numeric[]) as arr(name, weight, portion, calories, 
 	fats, proteins, carbohydrates)
 JOIN
-	products ON (products.user_id = $1 AND products.name = arr.name);
+	products ON (products.user_id = $1 AND products.name = arr.name)
+GROUP BY arr.name
+ON CONFLICT ON CONSTRAINT unique_product_eaten
+DO UPDATE SET
+	weight = pe.weight + EXCLUDED.weight, 
+	portion = pe.portion + EXCLUDED.portion, 
+	calories = pe.calories + EXCLUDED.calories,
+	fats = pe.fats + EXCLUDED.fats, 
+	proteins = pe.proteins + EXCLUDED.proteins, 
+	carbohydrates = pe.carbohydrates + EXCLUDED.carbohydrates;
 `
 
 func (s *RationStorage) AddProductsEaten(ctx context.Context,

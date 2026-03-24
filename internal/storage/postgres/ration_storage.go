@@ -142,7 +142,7 @@ func (s *RationStorage) UpdateRation(ctx context.Context,
 			return 0, domain.ErrRationNotExists
 		}
 		err = mylog.WrapError(err, attrs...)
-		return 0, fmt.Errorf("error adding ration to table: %w", err)
+		return 0, fmt.Errorf("error updating ration in table: %w", err)
 	}
 
 	logger.Debug("ration updated in table")
@@ -155,7 +155,8 @@ SELECT
 FROM
 	rations
 WHERE
-	user_id = $1;
+	user_id = $1
+ORDER BY date;
 `
 
 func (s *RationStorage) SelectRationsByUser(ctx context.Context,
@@ -174,4 +175,36 @@ func (s *RationStorage) SelectRationsByUser(ctx context.Context,
 
 	logger.Debug("rations selected from table")
 	return rations, nil
+}
+
+const addRationToRation = `
+UPDATE rations SET
+	calories = ROUND(calories + $3, 2), fats = ROUND(fats + $4, 2),
+	proteins = ROUND(proteins + $5, 2), carbohydrates = ROUND(carbohydrates + $6, 2)
+WHERE
+	user_id = $1 AND date = $2
+RETURNING id;
+`
+
+func (s *RationStorage) AddRationToRation(ctx context.Context,
+	user domain.User, ration domain.Ration) (int, error) {
+	attrs := []any{
+		"table", tableRationName,
+	}
+	logger := mylog.FromContext(ctx).With(attrs...)
+
+	row := s.pool.QueryRow(ctx, addRationToRation, user.Id, ration.Date,
+		ration.Calories, ration.Fats, ration.Proteins, ration.Carbohydrates)
+
+	var id int
+	if err := row.Scan(&id); err != nil {
+		if isNoRows(err) {
+			return 0, domain.ErrRationNotExists
+		}
+		err = mylog.WrapError(err, attrs...)
+		return 0, fmt.Errorf("error updating ration in table: %w", err)
+	}
+
+	logger.Debug("ration updated in table")
+	return id, nil
 }
