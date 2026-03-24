@@ -34,6 +34,8 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 	mux.Handle("PUT /ration/update", authMiddleware(a.RationUpdate))
 	mux.Handle("GET /ration", authMiddleware(a.Ration))
 
+	mux.Handle("PATCH /ration/product/add", authMiddleware(a.RationProductAdd))
+
 	handler := logMiddleware(mux)
 
 	server := &http.Server{
