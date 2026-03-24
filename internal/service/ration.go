@@ -112,3 +112,18 @@ func (s *Service) UpdateRation(ctx context.Context, user domain.User,
 
 	return ration, nil
 }
+
+func (s *Service) SelectRationsByUser(ctx context.Context,
+	user domain.User) ([]domain.Ration, error) {
+	logger := mylog.FromContext(ctx).With("user", user)
+	ctx = mylog.NewContext(ctx, logger)
+
+	rations, err := s.rationStorage.SelectRationsByUser(ctx, user)
+	if err != nil {
+		err = convertErrAndLog(ctx, logger, "error selecting rations", err)
+		return nil, err
+	}
+	logger.Info("rations selected")
+
+	return rations, nil
+}
