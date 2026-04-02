@@ -1,0 +1,10 @@
+{
+    "http_server": {
+        "timeout": "10s",
+        "idle_timeout": "60s"
+    },
+    "storage": {
+        "pool_max_conns": 20,
+        "pool_min_conns": 0
+    }
+}

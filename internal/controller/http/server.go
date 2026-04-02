@@ -40,7 +40,7 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 
 	server := &http.Server{
 		Handler:      handler,
-		Addr:         cfg.Address,
+		Addr:         ":8000",
 		ReadTimeout:  cfg.Timeout.Duration,
 		WriteTimeout: cfg.Timeout.Duration,
 		IdleTimeout:  cfg.IdleTimeout.Duration,

@@ -1,2 +1,2 @@
-config/backend.json
 config/HS256key.txt
+.env

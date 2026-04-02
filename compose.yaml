@@ -1,0 +1,39 @@
+name: calories_calculator
+
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    configs:
+      - source: http_config
+        target: app/config/backend.json
+      - source: JWT-key
+        target: app/config/HS256key.txt
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:18
+    env_file: .env
+    volumes:
+      - calories_calculator_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "$$POSTGRES_USER", "-d", "$$POSTGRES_DB"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+      start_interval: 1s
+
+volumes:
+  calories_calculator_data:
+
+configs:
+  http_config:
+    file: config/backend.json
+  JWT-key:
+    file: config/HS256key.txt
+    

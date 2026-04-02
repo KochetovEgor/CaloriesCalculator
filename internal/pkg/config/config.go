@@ -13,7 +13,6 @@ type Config struct {
 }
 
 type Server struct {
-	Address     string   `json:"address"`
 	Timeout     Duration `json:"timeout"`
 	IdleTimeout Duration `json:"idle_timeout"`
 }
@@ -45,7 +44,6 @@ func (d *Duration) UnmarshalJSON(b []byte) error {
 
 var defaultConfig = Config{
 	Server: Server{
-		Address:     "localhost:8000",
 		Timeout:     Duration{20 * time.Second},
 		IdleTimeout: Duration{60 * time.Second},
 	},
