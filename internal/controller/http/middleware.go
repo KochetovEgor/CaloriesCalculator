@@ -55,8 +55,8 @@ func getUserFromContext(ctx context.Context) domain.User {
 	return domain.User{}
 }
 
-func authMiddleware(next http.HandlerFunc) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		logger := mylog.FromContext(r.Context())
 
 		authHeader := r.Header.Get("Authorization")
@@ -77,5 +77,5 @@ func authMiddleware(next http.HandlerFunc) http.Handler {
 
 		ctx := putUserToContext(r.Context(), user)
 		next(w, r.WithContext(ctx))
-	})
+	}
 }

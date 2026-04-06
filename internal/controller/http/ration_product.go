@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func (a *App) RationProductAdd(w http.ResponseWriter, r *http.Request) {
+func (a *App) RationsProductsPatch(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
 

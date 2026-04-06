@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func (a *App) ProductAdd(w http.ResponseWriter, r *http.Request) {
+func (a *App) ProductsPost(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
 
@@ -47,7 +47,7 @@ type productDeleteRequest struct {
 	Name string `json:"name"`
 }
 
-func (a *App) ProductDelete(w http.ResponseWriter, r *http.Request) {
+func (a *App) ProductsDelete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
 
@@ -77,7 +77,7 @@ func (a *App) ProductDelete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (a *App) ProductUpdate(w http.ResponseWriter, r *http.Request) {
+func (a *App) ProductsPut(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
 
@@ -111,7 +111,7 @@ func (a *App) ProductUpdate(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(models.Product(product))
 }
 
-func (a *App) Product(w http.ResponseWriter, r *http.Request) {
+func (a *App) ProductsGet(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
 

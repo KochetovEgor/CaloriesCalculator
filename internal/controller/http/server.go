@@ -19,22 +19,26 @@ func New(service *service.Service) *App {
 
 func (a *App) Run(ctx context.Context, cfg config.Server) error {
 	mux := http.NewServeMux()
-	mux.Handle("/", authMiddleware(a.Test))
+	mux.HandleFunc("/", a.NotExists)
 
+	// users
 	mux.HandleFunc("POST /login", a.Login)
 	mux.HandleFunc("POST /register", a.Register)
 
-	mux.Handle("POST /product/add", authMiddleware(a.ProductAdd))
-	mux.Handle("DELETE /product/delete", authMiddleware(a.ProductDelete))
-	mux.Handle("PUT /product/update", authMiddleware(a.ProductUpdate))
-	mux.Handle("GET /product", authMiddleware(a.Product))
+	//products
+	mux.HandleFunc("GET /products", authMiddleware(a.ProductsGet))
+	mux.HandleFunc("POST /products", authMiddleware(a.ProductsPost))
+	mux.HandleFunc("PUT /products", authMiddleware(a.ProductsPut))
+	mux.HandleFunc("DELETE /products", authMiddleware(a.ProductsDelete))
 
-	mux.Handle("POST /ration/add", authMiddleware(a.RationAdd))
-	mux.Handle("DELETE /ration/delete", authMiddleware(a.RationDelete))
-	mux.Handle("PUT /ration/update", authMiddleware(a.RationUpdate))
-	mux.Handle("GET /ration", authMiddleware(a.Ration))
+	//rations
+	mux.HandleFunc("GET /rations", authMiddleware(a.RationsGet))
+	mux.HandleFunc("POST /rations", authMiddleware(a.RationsPost))
+	mux.HandleFunc("PUT /rations", authMiddleware(a.RationsPut))
+	mux.HandleFunc("DELETE /rations", authMiddleware(a.RationsDelete))
 
-	mux.Handle("PATCH /ration/product/add", authMiddleware(a.RationProductAdd))
+	//rations/products
+	mux.HandleFunc("PATCH /rations/products", authMiddleware(a.RationsProductsPatch))
 
 	handler := logMiddleware(mux)
 
@@ -53,8 +57,6 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 	return err
 }
 
-func (a *App) Test(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	user := getUserFromContext(ctx)
-	fmt.Fprintf(w, "Hello world %v\n", user)
+func (a *App) NotExists(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "endpoint not exists")
 }
