@@ -1,29 +1,13 @@
 package http
 
 import (
+	"CaloriesCalculator/internal/controller/http/models"
 	"CaloriesCalculator/internal/domain"
 	"CaloriesCalculator/pkg/mylog"
 	"encoding/json"
 	"errors"
 	"net/http"
 )
-
-type rationAddRequest struct {
-	Date     string `json:"date"`
-	Products []struct {
-		Name    string  `json:"name"`
-		Weight  float64 `json:"weight"`
-		Portion float64 `json:"portion"`
-	} `json:"products"`
-}
-
-type rationAddResponse struct {
-	Date          string  `json:"date"`
-	Calories      float64 `json:"calories"`
-	Fats          float64 `json:"fats"`
-	Proteins      float64 `json:"proteins"`
-	Carbohydrates float64 `json:"carbohydrates"`
-}
 
 func (a *App) RationAdd(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -34,7 +18,7 @@ func (a *App) RationAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := rationAddRequest{}
+	req := models.RationWithProducts{}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		ErrorResp(w, errInvalidRequestBody, http.StatusBadRequest, logger)
 		return
@@ -43,11 +27,7 @@ func (a *App) RationAdd(w http.ResponseWriter, r *http.Request) {
 
 	productsEaten := make([]domain.ProductEaten, len(req.Products))
 	for i, p := range req.Products {
-		productsEaten[i] = domain.ProductEaten{
-			Name:    p.Name,
-			Weight:  p.Weight,
-			Portion: p.Portion,
-		}
+		productsEaten[i] = models.ProductEatenToDomain(p)
 	}
 
 	ration, err := a.service.AddRation(ctx, user, req.Date, productsEaten)
@@ -65,7 +45,7 @@ func (a *App) RationAdd(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	json.NewEncoder(w).Encode(rationAddResponse(ration))
+	json.NewEncoder(w).Encode(models.Ration(ration))
 }
 
 type rationDeleteRequest struct {
@@ -102,23 +82,6 @@ func (a *App) RationDelete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-type rationUpdateRequest struct {
-	Date     string `json:"date"`
-	Products []struct {
-		Name    string  `json:"name"`
-		Weight  float64 `json:"weight"`
-		Portion float64 `json:"portion"`
-	} `json:"products"`
-}
-
-type rationUpdateResponse struct {
-	Date          string  `json:"date"`
-	Calories      float64 `json:"calories"`
-	Fats          float64 `json:"fats"`
-	Proteins      float64 `json:"proteins"`
-	Carbohydrates float64 `json:"carbohydrates"`
-}
-
 func (a *App) RationUpdate(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
@@ -128,7 +91,7 @@ func (a *App) RationUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := rationUpdateRequest{}
+	req := models.RationWithProducts{}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		ErrorResp(w, errInvalidRequestBody, http.StatusBadRequest, logger)
 		return
@@ -137,11 +100,7 @@ func (a *App) RationUpdate(w http.ResponseWriter, r *http.Request) {
 
 	productsEaten := make([]domain.ProductEaten, len(req.Products))
 	for i, p := range req.Products {
-		productsEaten[i] = domain.ProductEaten{
-			Name:    p.Name,
-			Weight:  p.Weight,
-			Portion: p.Portion,
-		}
+		productsEaten[i] = models.ProductEatenToDomain(p)
 	}
 
 	ration, err := a.service.UpdateRation(ctx, user, req.Date, productsEaten)
@@ -159,15 +118,7 @@ func (a *App) RationUpdate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	json.NewEncoder(w).Encode(rationUpdateResponse(ration))
-}
-
-type rationResponse struct {
-	Date          string  `json:"date"`
-	Calories      float64 `json:"calories"`
-	Fats          float64 `json:"fats"`
-	Proteins      float64 `json:"proteins"`
-	Carbohydrates float64 `json:"carbohydrates"`
+	json.NewEncoder(w).Encode(models.Ration(ration))
 }
 
 func (a *App) Ration(w http.ResponseWriter, r *http.Request) {
@@ -188,15 +139,9 @@ func (a *App) Ration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := make([]rationResponse, len(rations))
+	resp := make([]models.Ration, len(rations))
 	for i, r := range rations {
-		resp[i] = rationResponse{
-			Date:          r.Date,
-			Calories:      r.Calories,
-			Fats:          r.Fats,
-			Proteins:      r.Proteins,
-			Carbohydrates: r.Carbohydrates,
-		}
+		resp[i] = models.RationToModel(r)
 	}
 
 	w.Header().Set("Content-Type", "application/json")

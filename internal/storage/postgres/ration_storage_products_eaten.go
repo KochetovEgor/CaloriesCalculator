@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS products_eaten (
 	carbohydrates NUMERIC NOT NULL,
 	CONSTRAINT unique_product_eaten UNIQUE (ration_id, product_id),
 	CONSTRAINT foreign_key_ration_id FOREIGN KEY (ration_id) REFERENCES rations(id) ON DELETE CASCADE,
-	CONSTRAINT foreign_key_product_id FOREIGN KEY (product_id) REFERENCES products(id)
+	CONSTRAINT foreign_key_product_id FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
 );
 `
 

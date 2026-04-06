@@ -1,16 +1,13 @@
 package http
 
 import (
+	"CaloriesCalculator/internal/controller/http/models"
 	"CaloriesCalculator/internal/domain"
 	"CaloriesCalculator/pkg/mylog"
 	"encoding/json"
 	"errors"
 	"net/http"
 )
-
-type loginResponse struct {
-	AccessToken string `json:"access_token"`
-}
 
 func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -38,23 +35,14 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	json.NewEncoder(w).Encode(loginResponse{AccessToken: token})
-}
-
-type registerRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-type registerResponse struct {
-	Username string `json:"username"`
+	json.NewEncoder(w).Encode(models.AccessToken{AccessToken: token})
 }
 
 func (a *App) Register(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
 
-	userReq := &registerRequest{}
+	userReq := &models.UserPWD{}
 	err := json.NewDecoder(r.Body).Decode(userReq)
 	if err != nil {
 		ErrorResp(w, errInvalidRequestBody, http.StatusBadRequest, logger)
@@ -76,5 +64,5 @@ func (a *App) Register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	json.NewEncoder(w).Encode(registerResponse{Username: user.Username})
+	json.NewEncoder(w).Encode(models.User{Username: user.Username})
 }

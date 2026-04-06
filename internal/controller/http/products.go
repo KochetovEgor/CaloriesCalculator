@@ -1,22 +1,13 @@
 package http
 
 import (
+	"CaloriesCalculator/internal/controller/http/models"
 	"CaloriesCalculator/internal/domain"
 	"CaloriesCalculator/pkg/mylog"
 	"encoding/json"
 	"errors"
 	"net/http"
 )
-
-type productAddRequest struct {
-	Name          string  `json:"name"`
-	BaseWeight    float64 `json:"base_weight"`
-	BasePortion   float64 `json:"base_portion"`
-	Calories      float64 `json:"calories"`
-	Fats          float64 `json:"fats"`
-	Proteins      float64 `json:"proteins"`
-	Carbohydrates float64 `json:"carbohydrates"`
-}
 
 func (a *App) ProductAdd(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -27,7 +18,7 @@ func (a *App) ProductAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := productAddRequest{}
+	req := models.Product{}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		ErrorResp(w, errInvalidRequestBody, http.StatusBadRequest, logger)
 		return
@@ -49,7 +40,7 @@ func (a *App) ProductAdd(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	json.NewEncoder(w).Encode(productAddRequest(product))
+	json.NewEncoder(w).Encode(models.Product(product))
 }
 
 type productDeleteRequest struct {
@@ -86,16 +77,6 @@ func (a *App) ProductDelete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-type productUpdateRequest struct {
-	Name          string  `json:"name"`
-	BaseWeight    float64 `json:"base_weight"`
-	BasePortion   float64 `json:"base_portion"`
-	Calories      float64 `json:"calories"`
-	Fats          float64 `json:"fats"`
-	Proteins      float64 `json:"proteins"`
-	Carbohydrates float64 `json:"carbohydrates"`
-}
-
 func (a *App) ProductUpdate(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
@@ -105,7 +86,7 @@ func (a *App) ProductUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := productUpdateRequest{}
+	req := models.Product{}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		ErrorResp(w, errInvalidRequestBody, http.StatusBadRequest, logger)
 		return
@@ -127,17 +108,7 @@ func (a *App) ProductUpdate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	json.NewEncoder(w).Encode(productUpdateRequest(product))
-}
-
-type productResponse struct {
-	Name          string  `json:"name"`
-	BaseWeight    float64 `json:"base_weight"`
-	BasePortion   float64 `json:"base_portion"`
-	Calories      float64 `json:"calories"`
-	Fats          float64 `json:"fats"`
-	Proteins      float64 `json:"proteins"`
-	Carbohydrates float64 `json:"carbohydrates"`
+	json.NewEncoder(w).Encode(models.Product(product))
 }
 
 func (a *App) Product(w http.ResponseWriter, r *http.Request) {
@@ -161,17 +132,9 @@ func (a *App) Product(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	resp := make([]productResponse, len(products))
+	resp := make([]models.Product, len(products))
 	for i, p := range products {
-		resp[i] = productResponse{
-			Name:          p.Name,
-			BaseWeight:    p.BaseWeight,
-			BasePortion:   p.BasePortion,
-			Calories:      p.Calories,
-			Fats:          p.Fats,
-			Proteins:      p.Proteins,
-			Carbohydrates: p.Carbohydrates,
-		}
+		resp[i] = models.ProductToModel(p)
 	}
 
 	json.NewEncoder(w).Encode(resp)

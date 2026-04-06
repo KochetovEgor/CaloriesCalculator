@@ -1,29 +1,13 @@
 package http
 
 import (
+	"CaloriesCalculator/internal/controller/http/models"
 	"CaloriesCalculator/internal/domain"
 	"CaloriesCalculator/pkg/mylog"
 	"encoding/json"
 	"errors"
 	"net/http"
 )
-
-type rationProductAddRequest struct {
-	Date     string `json:"date"`
-	Products []struct {
-		Name    string  `json:"name"`
-		Weight  float64 `json:"weight"`
-		Portion float64 `json:"portion"`
-	} `json:"products"`
-}
-
-type rationProductAddResponse struct {
-	Date          string  `json:"date"`
-	Calories      float64 `json:"calories"`
-	Fats          float64 `json:"fats"`
-	Proteins      float64 `json:"proteins"`
-	Carbohydrates float64 `json:"carbohydrates"`
-}
 
 func (a *App) RationProductAdd(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -34,7 +18,7 @@ func (a *App) RationProductAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := rationProductAddRequest{}
+	req := models.RationWithProducts{}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		ErrorResp(w, errInvalidRequestBody, http.StatusBadRequest, logger)
 		return
@@ -43,11 +27,7 @@ func (a *App) RationProductAdd(w http.ResponseWriter, r *http.Request) {
 
 	productsEaten := make([]domain.ProductEaten, len(req.Products))
 	for i, p := range req.Products {
-		productsEaten[i] = domain.ProductEaten{
-			Name:    p.Name,
-			Weight:  p.Weight,
-			Portion: p.Portion,
-		}
+		productsEaten[i] = models.ProductEatenToDomain(p)
 	}
 
 	ration, err := a.service.AddProductsToRation(ctx, user, req.Date, productsEaten)
@@ -65,5 +45,5 @@ func (a *App) RationProductAdd(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	json.NewEncoder(w).Encode(rationProductAddResponse(ration))
+	json.NewEncoder(w).Encode(models.RationToModel(ration))
 }
