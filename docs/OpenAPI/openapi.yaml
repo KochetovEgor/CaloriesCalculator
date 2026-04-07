@@ -84,6 +84,22 @@ components:
         proteins: {type: number, example: 36}
         carbohydrates: {type: number, example: 67}
     
+    ProductEatenWithoutCalculation:
+      type: object
+      description: "shows how much user has eaten of a certain product, but without calculating calories and other parameters."
+      required: [name, weight, portion]
+      properties:
+        name: {type: string, example: "onion"}
+        weight: 
+          type: number
+          description: "weight of product, that user ate. This sums to portion and then shows calories and other parameters."
+          example: 100
+        portion: 
+          type: number
+          description: "number of portions of product, that user ate"
+          example: 2.5
+      
+    
     Ration:
       type: object
       description: "user's ration for a ceration date"
@@ -111,7 +127,7 @@ components:
           type: array
           description: "list of eaten products"
           items:
-            $ref: "#/components/schemas/ProductEaten"
+            $ref: "#/components/schemas/ProductEatenWithoutCalculation"
 
   responses:
     '500':
@@ -140,6 +156,8 @@ tags:
     description: "Users managment"
   - name: products
     description: "Products (food) managment"
+  - name: rations
+    description: "User's rations managment"
 
 security:
   - BearerAuth: []
@@ -267,3 +285,103 @@ paths:
           $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
+  /rations:
+    get:
+      tags: [rations]
+      description: "Selects all user's rations"
+      responses:
+        '200':
+          description: "rations successfully selected"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ration'
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    
+    post:
+      tags: [rations]
+      description: "Add new user's ration on specific date"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RationWithProducts'
+      responses:
+        '200':
+          description: "ration succesfully added"
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Ration'
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags: [rations]
+      description: "Changes whole existing ration"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RationWithProducts'
+      responses:
+        '200':
+          description: "ration succesfully changed"
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Ration'
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags: [rations]
+      description: "Deletes ration"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [date]
+              properties:
+                date: {type: string, example: "2026-03-21"}
+      responses:
+        '200':
+          description: "ration successfully deleted"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /rations/products:
+    patch:
+      tags: [rations, products]
+      description: "Adds new eaten products to existing ration"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RationWithProducts'
+      responses:
+        '200':
+          description: "rpducts succesfully added to ration"
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Ration'
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+      

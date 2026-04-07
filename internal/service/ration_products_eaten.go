@@ -38,7 +38,7 @@ func (s *Service) AddProductsToRation(ctx context.Context, user domain.User,
 	id, err := s.rationStorage.AddRationToRation(ctx, user, ration)
 	if err != nil {
 		err = convertErrAndLog(ctx, logger, "error adding ration to ration", err)
-		return domain.Ration{}, nil
+		return domain.Ration{}, err
 	}
 	logger.Info("ration updated")
 
