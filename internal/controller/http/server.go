@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 type App struct {
@@ -50,11 +51,30 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 		IdleTimeout:  cfg.IdleTimeout.Duration,
 	}
 
-	logger := mylog.FromContext(ctx)
-	logger.Info("server succesfully started", "addr", server.Addr)
+	logger := mylog.FromContext(ctx).With("addr", server.Addr)
 
-	err := server.ListenAndServe()
-	return err
+	chErr := make(chan error)
+	go func() {
+		<-ctx.Done()
+		logger.Info("shutting down server")
+
+		ctxTimeout, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		cancel()
+
+		chErr <- server.Shutdown(ctxTimeout)
+	}()
+
+	logger.Info("server started")
+
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		return fmt.Errorf("error starting server: %w", err)
+	}
+
+	if err := <-chErr; err != nil {
+		return fmt.Errorf("error shutting down server: %w", err)
+	}
+
+	return nil
 }
 
 func (a *App) NotExists(w http.ResponseWriter, r *http.Request) {

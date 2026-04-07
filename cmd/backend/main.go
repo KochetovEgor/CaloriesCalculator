@@ -10,6 +10,8 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 const (
@@ -20,7 +22,10 @@ const (
 func main() {
 	mylog.InitLogger(os.Stdout, slog.LevelDebug)
 	slog.Info("logger initialized")
+
 	ctx := mylog.NewContext(context.Background(), slog.Default())
+	ctx, stop := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 
 	cfg, err := config.LoadConfig(configBackendPath)
 	if err != nil {
@@ -52,7 +57,7 @@ func main() {
 
 	defer func() {
 		service.Close()
-		slog.Info("storage succesfully closed")
+		slog.Info("service closed")
 	}()
 
 	if err := service.Init(ctx); err != nil {
@@ -65,4 +70,5 @@ func main() {
 	if err := app.Run(ctx, cfg.Server); err != nil {
 		slog.ErrorContext(mylog.ErrToContext(ctx, err), err.Error())
 	}
+	slog.Info("server shutted down")
 }
