@@ -9,6 +9,7 @@ import (
 	"net/http"
 )
 
+// POST /products
 func (a *App) ProductsPost(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
@@ -47,6 +48,7 @@ type productDeleteRequest struct {
 	Name string `json:"name"`
 }
 
+// DELETE /products
 func (a *App) ProductsDelete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
@@ -77,6 +79,7 @@ func (a *App) ProductsDelete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// PUT /products
 func (a *App) ProductsPut(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
@@ -111,6 +114,7 @@ func (a *App) ProductsPut(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(models.Product(product))
 }
 
+// GET /products
 func (a *App) ProductsGet(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)

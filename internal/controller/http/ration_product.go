@@ -9,6 +9,7 @@ import (
 	"net/http"
 )
 
+// PATCH /rations/products
 func (a *App) RationsProductsPatch(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)

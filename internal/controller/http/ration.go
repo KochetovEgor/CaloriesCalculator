@@ -9,6 +9,7 @@ import (
 	"net/http"
 )
 
+// POST /rations
 func (a *App) RationsPost(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
@@ -52,6 +53,7 @@ type rationDeleteRequest struct {
 	Date string `json:"date"`
 }
 
+// DELETE /rations
 func (a *App) RationsDelete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
@@ -82,6 +84,7 @@ func (a *App) RationsDelete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// PUT /rations
 func (a *App) RationsPut(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
@@ -121,6 +124,7 @@ func (a *App) RationsPut(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(models.Ration(ration))
 }
 
+// GET /rations
 func (a *App) RationsGet(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)

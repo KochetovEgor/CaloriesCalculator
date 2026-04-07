@@ -9,6 +9,7 @@ import (
 	"net/http"
 )
 
+// POST /login
 func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)
@@ -38,6 +39,7 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(models.AccessToken{AccessToken: token})
 }
 
+// POST /register
 func (a *App) Register(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := mylog.FromContext(ctx)

@@ -1,0 +1,107 @@
+openapi: '3.0.3'
+info:
+  title: Calories Calculator
+  version: 1.0.0
+servers:
+  - url: https://localhost:8000
+paths:
+  /test:
+    get:
+      responses:
+        '200':
+          description: OK
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
+  schemas:
+    User:
+      type: object
+      required: [username]
+      properties:
+        username: { type: string, example: "Shogun Raiden" }
+    
+    UserPWD:
+      type: object
+      required: [username, password]
+      properties:
+        username: {type: string, example: "Raiden Shogun"}
+        password: {type: string, minLength: 3, example: "qwerty"}
+    
+    AccessToken:
+      type: object
+      required: [access_token]
+      properties:
+        access_token: { type: string }
+    
+    Product:
+      type: object
+      description: "product (or food), that user can add and then calculate their calories"
+      required: [name, base_weight, base_portion, calories, fats, proteins, carbohydrates]
+      properties:
+        name: {type: string, example: "onion"}
+        base_weight: 
+          type: number
+          description: "base weight of product for which calories and other parameters are indicated"
+          example: 100
+        base_portion: 
+          type: number
+          description: "base portion of product, that user usually eat"
+          example: 250
+        calories: {type: number, example: 150.6}
+        fats: {type: number, example: 4.4}
+        proteins: {type: number, example: 5}
+        carbohydrates: {type: number, example: 24.6}
+    
+    ProductEaten:
+      type: object
+      description: "shows how much user has eaten of a certain product"
+      required: [name, weight, portion, calories, fats, proteins, carbohydrates]
+      properties:
+        name: {type: string, example: "onion"}
+        weight: 
+          type: number
+          description: "weight of product, that user ate. This sums to portion and then shows calories and other parameters."
+          example: 100
+        portion: 
+          type: number
+          description: "number of portions of product, that user ate"
+          example: 2.5
+        calories: {type: number, example: 300}
+        fats: {type: number, example: 20.5}
+        proteins: {type: number, example: 36}
+        carbohydrates: {type: number, example: 67}
+    
+    Ration:
+      type: object
+      description: "user's ration for a ceration date"
+      required: [date, calories, fats, proteins, carbohydrates]
+      properties:
+        date:
+          type: string
+          description: "date of ration, specified by user in YYYY-MM-DD format"
+          example: "2026-03-21"
+        calories: {type: number, example: 1820.7}
+        fats: {type: number, example: 53}
+        proteins: {type: number, example: 110.2}
+        carbohydrates: {type: number, example: 250}
+    
+    RationWithProducts:
+      type: object
+      description: "user's ration for a certaion date with a list of eaten products"
+      required: [date, products]
+      properties:
+        date:
+          type: string
+          description: "date of ration, specified by user in YYYY-MM-DD format"
+          example: "2026-03-21"
+        products:
+          type: array
+          description: "list of eaten products"
+          items:
+            $ref: "#/components/schemas/ProductEaten"
+

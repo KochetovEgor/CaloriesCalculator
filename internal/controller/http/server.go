@@ -25,20 +25,20 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 	mux.HandleFunc("POST /login", a.Login)
 	mux.HandleFunc("POST /register", a.Register)
 
-	//products
-	mux.HandleFunc("GET /products", authMiddleware(a.ProductsGet))
-	mux.HandleFunc("POST /products", authMiddleware(a.ProductsPost))
-	mux.HandleFunc("PUT /products", authMiddleware(a.ProductsPut))
-	mux.HandleFunc("DELETE /products", authMiddleware(a.ProductsDelete))
+	// products
+	mux.HandleFunc("GET /products", bearerAuthMiddleware(a.ProductsGet))
+	mux.HandleFunc("POST /products", bearerAuthMiddleware(a.ProductsPost))
+	mux.HandleFunc("PUT /products", bearerAuthMiddleware(a.ProductsPut))
+	mux.HandleFunc("DELETE /products", bearerAuthMiddleware(a.ProductsDelete))
 
-	//rations
-	mux.HandleFunc("GET /rations", authMiddleware(a.RationsGet))
-	mux.HandleFunc("POST /rations", authMiddleware(a.RationsPost))
-	mux.HandleFunc("PUT /rations", authMiddleware(a.RationsPut))
-	mux.HandleFunc("DELETE /rations", authMiddleware(a.RationsDelete))
+	// rations
+	mux.HandleFunc("GET /rations", bearerAuthMiddleware(a.RationsGet))
+	mux.HandleFunc("POST /rations", bearerAuthMiddleware(a.RationsPost))
+	mux.HandleFunc("PUT /rations", bearerAuthMiddleware(a.RationsPut))
+	mux.HandleFunc("DELETE /rations", bearerAuthMiddleware(a.RationsDelete))
 
-	//rations/products
-	mux.HandleFunc("PATCH /rations/products", authMiddleware(a.RationsProductsPatch))
+	// rations/products
+	mux.HandleFunc("PATCH /rations/products", bearerAuthMiddleware(a.RationsProductsPatch))
 
 	handler := logMiddleware(mux)
 
