@@ -20,6 +20,8 @@ services:
     ports:
       - "8000:8000"
     env_file: .env
+    environment:
+      SWAGGER_UI_ADDR: http://localhost:8080
     configs:
       - source: http_config
         target: app/config/backend.json

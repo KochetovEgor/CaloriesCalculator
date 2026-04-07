@@ -3,13 +3,7 @@ info:
   title: Calories Calculator
   version: 1.0.0
 servers:
-  - url: https://localhost:8000
-paths:
-  /test:
-    get:
-      responses:
-        '200':
-          description: OK
+  - url: http://localhost:8000
 
 components:
   securitySchemes:
@@ -17,13 +11,27 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: "enter user's name and password"
   
   schemas:
+    ErrorResponse:
+      type: object
+      required: [errors]
+      properties:
+        errors:
+          type: array
+          items: 
+            type: string
+            example: "some error"
+
     User:
       type: object
       required: [username]
       properties:
-        username: { type: string, example: "Shogun Raiden" }
+        username: { type: string, example: "Raiden Shogun" }
     
     UserPWD:
       type: object
@@ -105,3 +113,157 @@ components:
           items:
             $ref: "#/components/schemas/ProductEaten"
 
+  responses:
+    '500':
+      description: "Internal error"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            InternalError:
+              value:
+                errors: ["internal error"]
+    '400':
+      description: "Bad request"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            InternalError:
+              value:
+                errors: ["bad request"]
+
+tags:
+  - name: users
+    description: "Users managment"
+  - name: products
+    description: "Products (food) managment"
+
+security:
+  - BearerAuth: []
+
+paths:
+  /login:
+    post:
+      tags: [users]
+      security: 
+        - BasicAuth: []
+      responses:
+        '200':
+          description: "User logined"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/500'
+  
+  /register:
+    post:
+      tags: [users]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserPWD"
+      responses:
+        '200':
+          description: "User registered"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /products:
+    get:
+      tags: [products]
+      description: "Selects all user's products (food)"
+      responses:
+        '200':
+          description: "Products selected and sended to user"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+
+    post:
+      tags: [products]
+      description: "Adds new product"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: "product successfully added"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags: [products]
+      description: "Changes existing product"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: "product successfully changed"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags: [products]
+      description: "Deletes existing product"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: {type: string, example: "onion"}
+      responses:
+        '200':
+          description: "product successfully deleted"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'

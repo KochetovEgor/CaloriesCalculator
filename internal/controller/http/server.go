@@ -40,7 +40,7 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 	// rations/products
 	mux.HandleFunc("PATCH /rations/products", bearerAuthMiddleware(a.RationsProductsPatch))
 
-	handler := logMiddleware(mux)
+	handler := logMiddleware(CORSMiddleware(mux))
 
 	server := &http.Server{
 		Handler:      handler,
