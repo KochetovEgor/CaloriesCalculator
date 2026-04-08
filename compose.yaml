@@ -31,6 +31,16 @@ services:
       postgres:
         condition: service_healthy
     restart: always
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./static:/static:ro
+    depends_on:
+      - backend
+    restart: always
   
   swagger-ui:
     image: swaggerapi/swagger-ui
@@ -40,6 +50,8 @@ services:
       SWAGGER_JSON: /docs/openapi.yaml
     volumes:
       - ./docs/OpenAPI/openapi.yaml:/docs/openapi.yaml
+    depends_on:
+      - backend
     stop_grace_period: 0s
     restart: always
 
@@ -51,4 +63,3 @@ configs:
     file: config/backend.json
   JWT-key:
     file: config/HS256key.txt
-    

@@ -3,3 +3,6 @@
 README.MD
 .gitignore
 config
+docs
+static
+nginx

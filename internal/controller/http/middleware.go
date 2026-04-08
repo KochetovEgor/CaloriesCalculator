@@ -27,10 +27,15 @@ func logMiddleware(next http.Handler) http.Handler {
 
 		scw := &statusCodeWriter{ResponseWriter: w, statusCode: 200}
 
+		ip := r.Header.Get("X-Real-IP")
+		if ip != "" {
+			ip = r.RemoteAddr
+		}
+
 		logger := slog.Default().With(
 			"method", r.Method,
 			"url", r.URL.Path,
-			"ip", r.RemoteAddr,
+			"ip", ip,
 		)
 
 		ctx := mylog.NewContext(r.Context(), logger)
