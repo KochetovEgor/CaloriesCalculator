@@ -59,7 +59,7 @@ func (a *App) Run(ctx context.Context, cfg config.Server) error {
 		logger.Info("shutting down server")
 
 		ctxTimeout, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		cancel()
+		defer cancel()
 
 		chErr <- server.Shutdown(ctxTimeout)
 	}()
