@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+</head>
+<body>
+
+    <main>
+        <section>
+            <h1>Создать аккаунт</h1>
+            
+            <form id="registerForm" action="/api/register" method="POST">
+                <div>
+                    <label for="username">Имя пользователя:</label>
+                    <input type="text" id="username" name="username" required minlength="3">
+                </div>
+
+                <br>
+
+                <div>
+                    <label for="password">Пароль:</label>
+                    <input type="password" id="password" name="password" required minlength="3">
+                </div>
+
+                <br>
+
+                <div>
+                    <label for="confirm_password">Подтвердите пароль:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required minlength="3">
+                </div>
+
+                <br>
+
+                <div>
+                    <button id="registerButton" type="submit">Зарегистрироваться</button>
+                </div>
+            </form>
+
+            <hr>
+
+            <div>
+                <p>Уже есть аккаунт?</p>
+                <a href="/login">
+                    <button type="button">Войти</button>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p><a href="/">На главную</a></p>
+    </footer>
+
+    <template id="error-template">
+        <div class="field-errors-container">
+            <ul class="error-list">
+                </ul>
+        </div>
+    </template>
+
+    <script src="/static/js/register.js?v=1"></script>
+    <script src="/static/js/share/show_error.js?v=1"></script>
+</body>
+</html>
