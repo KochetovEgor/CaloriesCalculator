@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Продукты</title>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <div>
+                <a href="/">На главную</a>
+            </div>
+        </nav>
+
+        <nav>
+            <div id="auth-container">
+                <a href="/login">Войти</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Ваши продукты</h1>
+        
+        <ul id="products-list">
+            </ul>
+        
+        <button id="load-products-button">Показать продукты</button>
+
+        <div id="add-product-wrapper" style="margin-bottom: 20px;">
+            <button id="show-add-form-button">Добавить продукт</button>
+        </div>
+    </main>
+
+    <template id="product-template">
+        <li>
+            <h3 class="product-name"></h3>
+            <ul class="product-specs">
+                <li class="base-weight-info">Базовый вес: <span class="val-base-weight"></span> г</li>
+                <li class="base-portion-info">Стандартная порция: <span class="val-base-portion"></span> г</li>
+                <li class="calories-info">Калории: <span class="val-calories"></span> ккал</li>
+                <li class="proteins-info">Белки: <span class="val-proteins"></span> г/мл</li>
+                <li class="fats-info">Жиры: <span class="val-fats"></span> г/мл</li>
+                <li class="carbohydrates-info">Углеводы: <span class="val-carbohydrates"></span> г</li>
+            </ul>
+        </li>
+    </template>
+
+    <template id="add-product-form-template">
+        <form id="add-product-form">
+            <h3>Новый продукт</h3>
+            
+            <label>Название: <input type="text" name="name" required></label><br><br>
+            <label>Базовый вес (г/мл): <input type="number" name="base_weight"></label><br><br>
+            <label>Стандартная порция (г/мл): <input type="number" name="base_portion"></label><br><br>
+            <label>Калории (ккал): <input type="number" name="calories"></label><br><br>
+            <label>Белки (г): <input type="number" step="0.1" name="proteins"></label><br><br>
+            <label>Жиры (г): <input type="number" step="0.1" name="fats"></label><br><br>
+            <label>Углеводы (г): <input type="number" step="0.1" name="carbohydrates"></label><br><br>
+            
+            <button id="add-product-button" type="submit">Сохранить продукт</button>
+            <button type="button" id="cancel-add-button">Отмена</button>
+        </form>
+    </template>
+
+    <template id="error-template">
+        <div class="field-errors-container">
+            <ul class="error-list">
+                </ul>
+        </div>
+    </template>
+
+    <script src="/static/js/share/render_user_logged.js?v=2.js"></script>
+    <script src="/static/js/share/show_error.js?v=1"></script>
+    <script src="/static/js/products/load_products.js?v=1"></script>
+    <script src="/static/js/products/add_product.js?v=1"></script>
+    <script src="/static/js/products/common.js?v=2"></script>
+
+</body>
