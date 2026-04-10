@@ -1,3 +1,5 @@
+"use_strict"
+
 // showErrors renders 'error-template' with given errors over given inputElement.
 function showErrors(inputElement, errors) {
     const existingContainer = inputElement.parentElement.querySelector('.field-errors-container');

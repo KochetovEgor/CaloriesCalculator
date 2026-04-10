@@ -27,7 +27,6 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 			statusCcode = http.StatusInternalServerError
 		} else {
 			statusCcode = http.StatusUnauthorized
-			w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
 		}
 		ErrorResp(w, err, statusCcode, logger)
 		return

@@ -11,23 +11,23 @@
         <section>
             <h1>Авторизация</h1>
             
-            <form action="/api/login" method="POST">
+            <form id="loginForm" action="/api/login" method="POST">
                 <div>
                     <label for="username">Имя пользователя:</label>
-                    <input type="text" id="username" name="username" required>
+                    <input type="text" id="username" name="username" required minlength="3">
                 </div>
 
                 <br>
 
                 <div>
                     <label for="password">Пароль:</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" required minlength="3">
                 </div>
 
                 <br>
 
                 <div>
-                    <button type="submit">Войти</button>
+                    <button id="loginButton" type="submit">Войти</button>
                 </div>
             </form>
 
@@ -43,8 +43,18 @@
     </main>
 
     <footer>
-        <p><a href="/">Вернуться на главную</a></p>
+        <p><a href="/">На главную</a></p>
     </footer>
+
+    <template id="error-template">
+        <div class="field-errors-container">
+            <ul class="error-list">
+                </ul>
+        </div>
+    </template>
+
+    <script src="/static/js/share/show_error.js?v=1"></script>
+    <script src="/static/js/login.js?v=2"></script>
 
 </body>
 </html>
