@@ -1,8 +1,13 @@
-"use_strict"
+"use strict"
 
 // showErrors renders 'error-template' with given errors over given inputElement.
 function showErrors(inputElement, errors) {
-    const existingContainer = inputElement.parentElement.querySelector('.field-errors-container');
+    const card = inputElement.closest('.product-item') || 
+                 inputElement.closest('.edit-product-form') || 
+                 inputElement.parentElement;
+
+    const existingContainer = card.querySelector('.field-errors-container');
+    
     if (existingContainer) {
         existingContainer.remove();
     }
@@ -19,5 +24,11 @@ function showErrors(inputElement, errors) {
         list.appendChild(li);
     });
 
-    inputElement.after(clone);
+    const actionsContainer = inputElement.closest('.product-actions');
+    
+    if (actionsContainer) {
+        actionsContainer.after(clone);
+    } else {
+        inputElement.after(clone);
+    }
 }

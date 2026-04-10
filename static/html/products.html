@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/common.css?v=1">
+    <link rel="stylesheet" href="/static/css/products.css?v=1">
     <title>Продукты</title>
 </head>
 <body>
 
-    <header>
-        <nav>
-            <div>
-                <a href="/">На главную</a>
+    <header class="main-header">
+        <nav class="header-nav">
+            <div class="nav-links">
+                <a href="/" class="nav-item">На главную</a>
             </div>
-        </nav>
 
-        <nav>
-            <div id="auth-container">
-                <a href="/login">Войти</a>
+            <div class="nav-links">
+                <a href="/products" class="nav-item">Продукты</a>
+            </div>
+
+            <div id="auth-container" class="auth-block">
             </div>
         </nav>
     </header>
@@ -24,63 +27,191 @@
     <main>
         <h1>Ваши продукты</h1>
         
-        <ul id="products-list">
-            </ul>
-        
-        <button id="load-products-button">Показать продукты</button>
-
-        <div id="add-product-wrapper" style="margin-bottom: 20px;">
+        <div class="top-controls">
+            <button id="load-products-button">Показать продукты</button>
             <button id="show-add-form-button">Добавить продукт</button>
         </div>
+
+        <div id="add-product-wrapper"></div>
+        
+        <ul id="products-list">
+            </ul>
     </main>
 
     <template id="product-template">
         <li class="product-item">
             <h3 class="product-name"></h3>
             <ul class="product-specs">
-                <li class="base-weight-info">Базовый вес: <span class="val-base-weight"></span> г</li>
-                <li class="base-portion-info">Стандартная порция: <span class="val-base-portion"></span> г</li>
-                <li class="calories-info">Калории: <span class="val-calories"></span> ккал</li>
-                <li class="proteins-info">Белки: <span class="val-proteins"></span> г/мл</li>
-                <li class="fats-info">Жиры: <span class="val-fats"></span> г/мл</li>
-                <li class="carbohydrates-info">Углеводы: <span class="val-carbohydrates"></span> г</li>
+                <li class="base-weight-info">
+                    Базовый вес: 
+                    <div class="val-wrapper">
+                        <span class="val-base-weight"></span>
+                        <span class="unit-text">г/мл</span>
+                    </div>
+                </li>
+                <li class="base-portion-info">
+                    Стандартная порция: 
+                    <div class="val-wrapper">
+                        <span class="val-base-portion"></span>
+                        <span class="unit-text">г/мл</span>
+                    </div>
+                </li>
+                <li class="calories-info">
+                    Калории: 
+                    <div class="val-wrapper">
+                        <span class="val-calories"></span>
+                        <span class="unit-text">ккал</span>
+                    </div>
+                </li>
+                <li class="proteins-info">
+                    Белки: 
+                    <div class="val-wrapper">
+                        <span class="val-proteins"></span>
+                        <span class="unit-text">г</span>
+                    </div>
+                </li>
+                <li class="fats-info">
+                    Жиры: 
+                    <div class="val-wrapper">
+                        <span class="val-fats"></span>
+                        <span class="unit-text">г</span>
+                    </div>
+                </li>
+                <li class="carbohydrates-info">
+                    Углеводы: 
+                    <div class="val-wrapper">
+                        <span class="val-carbohydrates"></span>
+                        <span class="unit-text">г</span>
+                    </div>
+                </li>
             </ul>
-            <button class="edit-product-button">Изменить</button>
-            <button class="delete-product-button">Удалить</button>
+            <div class="product-actions">
+                <button class="edit-product-button">Изменить</button>
+                <button class="delete-product-button">Удалить</button>
+            </div>
         </li>
     </template>
 
     <template id="edit-product-template">
         <form class="edit-product-form">
-            <input type="text" name="name" class="edit-name" required>
+            <h3 class="edit-name-display"></h3>
+            
+            <input type="hidden" name="name" class="edit-name-input">
+
             <ul class="product-specs">
-                <li>Базовый вес: <input type="number" name="base_weight" class="edit-base-weight"> г</li>
-                <li>Стандартная порция: <input type="number" name="base_portion" class="edit-base-portion"> г</li>
-                <li>Калории: <input type="number" name="calories" class="edit-calories"> ккал</li>
-                <li>Белки: <input type="number" step="0.1" name="proteins" class="edit-proteins"> г</li>
-                <li>Жиры: <input type="number" step="0.1" name="fats" class="edit-fats"> г</li>
-                <li>Углеводы: <input type="number" step="0.1" name="carbohydrates" class="edit-carbohydrates"> г</li>
+                <li>
+                    Базовый вес: 
+                    <div class="val-wrapper">
+                        <input type="number" name="base_weight" step="any" class="edit-base-weight">
+                        <span class="unit-text">г/мл</span>
+                    </div>
+                </li>
+                <li>
+                    Стандартная порция: 
+                    <div class="val-wrapper">
+                        <input type="number" name="base_portion" step="any" class="edit-base-portion">
+                        <span class="unit-text">г/мл</span>
+                    </div>
+                </li>
+                <li>
+                    Калории: 
+                    <div class="val-wrapper">
+                        <input type="number" name="calories" step="any" class="edit-calories">
+                        <span class="unit-text">ккал</span>
+                    </div>
+                </li>
+                <li>
+                    Белки: 
+                    <div class="val-wrapper">
+                        <input type="number" name="proteins" step="any" class="edit-proteins">
+                        <span class="unit-text">г</span>
+                    </div>
+                </li>
+                <li>
+                    Жиры: 
+                    <div class="val-wrapper">
+                        <input type="number" name="fats" step="any" class="edit-fats">
+                        <span class="unit-text">г</span>
+                    </div>
+                </li>
+                <li>
+                    Углеводы: 
+                    <div class="val-wrapper">
+                        <input type="number" name="carbohydrates" step="any" class="edit-carbohydrates">
+                        <span class="unit-text">г</span>
+                    </div>
+                </li>
             </ul>
-            <button type="submit" class="save-edit-button">Сохранить</button>
-            <button type="button" class="cancel-edit-button">Отмена</button>
+            
+            <div class="product-actions">
+                <button type="submit" class="save-edit-button">Сохранить</button>
+                <button type="button" class="cancel-edit-button">Отмена</button>
+            </div>
         </form>
     </template>
 
     <template id="add-product-form-template">
-        <form id="add-product-form">
-            <h3>Новый продукт</h3>
-            
-            <label>Название: <input type="text" name="name" required></label><br><br>
-            <label>Базовый вес (г/мл): <input type="number" name="base_weight"></label><br><br>
-            <label>Стандартная порция (г/мл): <input type="number" name="base_portion"></label><br><br>
-            <label>Калории (ккал): <input type="number" name="calories"></label><br><br>
-            <label>Белки (г): <input type="number" step="0.1" name="proteins"></label><br><br>
-            <label>Жиры (г): <input type="number" step="0.1" name="fats"></label><br><br>
-            <label>Углеводы (г): <input type="number" step="0.1" name="carbohydrates"></label><br><br>
-            
-            <button id="add-product-button" type="submit">Сохранить продукт</button>
-            <button type="button" id="cancel-add-button">Отмена</button>
-        </form>
+        <div id="add-product-form-container" class="product-item">
+            <form id="add-product-form">
+                <h3 class="product-name" style="color: #28a745;">Новый продукт</h3>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 5px;">Название продукта:</label>
+                    <input type="text" name="name" placeholder="Введите название..." required 
+                        style="width: 100%; height: 35px; border: 1px solid #ced4da; border-radius: 6px; padding: 0 10px; box-sizing: border-box;">
+                </div>
+
+                <ul class="product-specs">
+                    <li>
+                        Базовый вес: 
+                        <div class="val-wrapper">
+                            <input type="number" name="base_weight" step="any" class="edit-base-weight" placeholder="0">
+                            <span class="unit-text">г/мл</span>
+                        </div>
+                    </li>
+                    <li>
+                        Стандартная порция: 
+                        <div class="val-wrapper">
+                            <input type="number" name="base_portion" step="any" class="edit-base-portion" placeholder="0">
+                            <span class="unit-text">г/мл</span>
+                        </div>
+                    </li>
+                    <li>
+                        Калории: 
+                        <div class="val-wrapper">
+                            <input type="number" name="calories" step="any" class="edit-calories" placeholder="0">
+                            <span class="unit-text">ккал</span>
+                        </div>
+                    </li>
+                    <li>
+                        Белки: 
+                        <div class="val-wrapper">
+                            <input type="number" name="proteins" step="any" class="edit-proteins" placeholder="0">
+                            <span class="unit-text">г</span>
+                        </div>
+                    </li>
+                    <li>
+                        Жиры: 
+                        <div class="val-wrapper">
+                            <input type="number" name="fats" step="any" class="edit-fats" placeholder="0">
+                            <span class="unit-text">г</span>
+                        </div>
+                    </li>
+                    <li>
+                        Углеводы: 
+                        <div class="val-wrapper">
+                            <input type="number" name="carbohydrates" step="any" class="edit-carbohydrates" placeholder="0">
+                            <span class="unit-text">г</span>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="product-actions">
+                    <button type="submit" id="add-product-button" class="save-edit-button">Создать</button>
+                    <button type="button" id="cancel-add-button" class="cancel-edit-button">Отмена</button>
+                </div>
+            </form>
+        </div>
     </template>
 
     <template id="error-template">
@@ -90,12 +221,12 @@
         </div>
     </template>
 
-    <script src="/static/js/share/render_user_logged.js?v=2.js"></script>
-    <script src="/static/js/share/show_error.js?v=1"></script>
+    <script src="/static/js/share/render_user_logged.js?v=4.js"></script>
+    <script src="/static/js/share/show_error.js?v=3"></script>
     <script src="/static/js/products/load_products.js?v=1"></script>
-    <script src="/static/js/products/add_product.js?v=1"></script>
+    <script src="/static/js/products/add_product.js?v=2"></script>
     <script src="/static/js/products/delete_product.js?v=1"></script>
-    <script src="/static/js/products/change_product.js?v=1"></script>
+    <script src="/static/js/products/change_product.js?v=3"></script>
     <script src="/static/js/products/common.js?v=2"></script>
 
 </body>

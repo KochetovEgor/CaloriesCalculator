@@ -3,25 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная страница</title>
+    <link rel="stylesheet" href="/static/css/common.css?v=1">
+    <link rel="stylesheet" href="/static/css/index.css?v=1">
+    <title>Калькулятор калорий — Главная</title>
 </head>
 <body>
 
-    <header>
-        <nav>
-            <div id="auth-container">
-                <a href="/login">Войти</a>
+    <header class="main-header">
+        <nav class="header-nav">
+            <div class="nav-links">
+                <a href="/" class="nav-item">На главную</a>
             </div>
+
+            <div class="nav-links">
+                <a href="/products" class="nav-item">Продукты</a>
+            </div>
+
+            <div id="auth-container" class="auth-block">
+                </div>
         </nav>
     </header>
 
-    <main>
-        <h1>Калькултятор калорий</h1>
-        <p>Приложение помогает следить за калориями пользователя.</p>
-        <a href="/products">Продукты</a>
+    <main class="hero-section">
+        <div class="hero-content">
+            <h1 class="app-title">Калькулятор калорий</h1>
+            <p class="app-description">
+                Приложение помогает следить за калориями пользователя.
+            </p>
+        </div>
+
+        <nav class="useful-links">
+            <h2 class="links-title">Быстрый доступ</h2>
+            <div class="links-column">
+                <a href="/products" class="nav-card">
+                    <div class="card-text">
+                        <span class="card-title">Мои продукты</span>
+                    </div>
+                </a>
+            </div>
+        </nav>
     </main>
 
-    <script src="/static/js/share/render_user_logged.js?v=2.js"></script>
+    <script src="/static/js/share/render_user_logged.js?v=4.js"></script>
 
 </body>
 </html>

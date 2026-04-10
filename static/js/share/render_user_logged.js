@@ -29,36 +29,44 @@ function getAuthData() {
 function renderUserLoggedIn(username) {
     const container = document.getElementById("auth-container");
 
-    while(container.firstChild) {
-        container.removeChild(container.firstChild);
-    }
+    container.innerHTML = "";
 
-    const usernameRender = document.createElement("p");
-    usernameRender.textContent = username;
+    const userWrapper = document.createElement("div");
+    userWrapper.className = "user-profile-wrapper";
+
+    const usernameSpan = document.createElement("span");
+    usernameSpan.className = "user-name-label";
+    usernameSpan.textContent = username;
 
     const logoutLink = document.createElement("a");
+    logoutLink.className = "nav-item logout-button";
     logoutLink.textContent = "Выйти";
     logoutLink.setAttribute("href", "/login");
-    logoutLink.addEventListener("click", function(){
+
+    logoutLink.addEventListener("click", function() {
         localStorage.removeItem("access_token");
     });
 
-    container.appendChild(usernameRender);
-    container.appendChild(logoutLink);
+    userWrapper.appendChild(usernameSpan);
+    userWrapper.appendChild(logoutLink);
+    container.appendChild(userWrapper);
 }
 
 function renderUserLoggedOut() {
     const container = document.getElementById("auth-container");
 
-    while(container.firstChild) {
-        container.removeChild(container.firstChild);
-    }
+    container.innerHTML = "";
 
-    const loginLink = document.createElement("a");
-    loginLink.textContent = "Войти";
-    loginLink.setAttribute("href", "/login");
+    const userWrapper = document.createElement("div");
+    userWrapper.className = "user-profile-wrapper";
 
-    container.appendChild(loginLink);
+    const logoutLink = document.createElement("a");
+    logoutLink.className = "nav-item logout-button";
+    logoutLink.textContent = "Войти";
+    logoutLink.setAttribute("href", "/login");
+
+    userWrapper.appendChild(logoutLink);
+    container.appendChild(userWrapper);
 }
 
 function renderUserComponents() {

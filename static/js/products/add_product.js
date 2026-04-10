@@ -2,6 +2,7 @@
 
 function showAddForm() {
     const clone = addProductFormTemplate.content.cloneNode(true);
+    const container = clone.querySelector('#add-product-form-container');
     const form = clone.querySelector('#add-product-form');
 
     showAddFormButton.style.display = "none";
@@ -10,7 +11,7 @@ function showAddForm() {
     form.addEventListener("submit", addProduct);
 
     document.getElementById("cancel-add-button").addEventListener("click", () => {
-        form.remove();
+        container.remove();
         showAddFormButton.style.display = "block";
     });
 }

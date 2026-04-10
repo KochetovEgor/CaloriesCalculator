@@ -1,0 +1,59 @@
+/* --- ГЛОБАЛЬНЫЙ КОНТЕЙНЕР --- */
+main {
+    max-width: 800px;
+    margin: 40px 0 0 40px; /* Отступ сверху и слева */
+    padding: 0;
+    text-align: left;
+}
+
+/* --- ТЕКСТ (Минимальные отступы) --- */
+.app-title {
+    font-size: 1.8rem;
+    color: #2d3436;
+    margin: 0 0 5px 0; /* Совсем маленький отступ до описания */
+    font-weight: 700;
+}
+
+.app-description {
+    font-size: 1rem;
+    color: #636e72;
+    margin: 0 0 20px 0; /* Отступ до блока ссылок */
+    max-width: 500px;
+    line-height: 1.3;
+}
+
+/* --- НАВИГАЦИЯ --- */
+.links-title {
+    font-size: 1rem;
+    color: #2d3436;
+    margin: 0 0 16px 0; /* Увеличил отступ (было 8px) */
+    font-weight: 600;
+}
+
+.links-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px; /* Чуть просторнее между самими ссылками */
+}
+
+/* --- КОМПАКТНАЯ ССЫЛКА --- */
+.nav-card {
+    text-decoration: none;
+    padding: 6px 10px; /* Уменьшил внутренние отступы */
+    background: #f1f3f5;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: 0.1s;
+}
+
+.nav-card:hover {
+    background: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #007bff;
+}

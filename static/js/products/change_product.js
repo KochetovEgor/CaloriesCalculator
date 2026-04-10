@@ -3,6 +3,8 @@
 function showEditForm(event) {
     const productItem = event.target.closest('.product-item');
     const template = document.getElementById('edit-product-template');
+    
+    // Создаем клон
     const editFormClone = template.content.cloneNode(true);
 
     const currentData = {
@@ -16,7 +18,10 @@ function showEditForm(event) {
     };
 
     const form = editFormClone.querySelector('.edit-product-form');
-    form.querySelector('.edit-name').value = currentData.name;
+    
+    // Заполняем данными
+    form.querySelector('.edit-name-display').textContent = currentData.name;
+    form.querySelector('.edit-name-input').value = currentData.name;
     form.querySelector('.edit-base-weight').value = currentData.weight;
     form.querySelector('.edit-base-portion').value = currentData.portion;
     form.querySelector('.edit-calories').value = currentData.calories;
@@ -24,16 +29,22 @@ function showEditForm(event) {
     form.querySelector('.edit-fats').value = currentData.fats;
     form.querySelector('.edit-carbohydrates').value = currentData.carbohydrates;
 
+    // Сохраняем оригинал ДО очистки
     const originalContent = productItem.innerHTML;
 
+    // Очищаем карточку и вставляем форму
     productItem.innerHTML = '';
-    productItem.appendChild(editFormClone);
+    // ВАЖНО: Мы добавляем форму, и теперь она должна занимать 100% ширины
+    productItem.appendChild(editFormClone); 
 
-    productItem.querySelector('.cancel-edit-button').addEventListener("click", function (){
+    // Находим элементы уже ВНУТРИ DOM после вставки
+    const currentForm = productItem.querySelector('.edit-product-form');
+
+    currentForm.querySelector('.cancel-edit-button').addEventListener("click", function () {
         productItem.innerHTML = originalContent;
     });
 
-    productItem.querySelector('.edit-product-form').addEventListener("submit", changeProduct    );
+    currentForm.addEventListener("submit", changeProduct);
 }
 
 async function changeProduct(event) {
