@@ -35,7 +35,7 @@
     </main>
 
     <template id="product-template">
-        <li>
+        <li class="product-item">
             <h3 class="product-name"></h3>
             <ul class="product-specs">
                 <li class="base-weight-info">Базовый вес: <span class="val-base-weight"></span> г</li>
@@ -45,7 +45,25 @@
                 <li class="fats-info">Жиры: <span class="val-fats"></span> г/мл</li>
                 <li class="carbohydrates-info">Углеводы: <span class="val-carbohydrates"></span> г</li>
             </ul>
+            <button class="edit-product-button">Изменить</button>
+            <button class="delete-product-button">Удалить</button>
         </li>
+    </template>
+
+    <template id="edit-product-template">
+        <form class="edit-product-form">
+            <input type="text" name="name" class="edit-name" required>
+            <ul class="product-specs">
+                <li>Базовый вес: <input type="number" name="base_weight" class="edit-base-weight"> г</li>
+                <li>Стандартная порция: <input type="number" name="base_portion" class="edit-base-portion"> г</li>
+                <li>Калории: <input type="number" name="calories" class="edit-calories"> ккал</li>
+                <li>Белки: <input type="number" step="0.1" name="proteins" class="edit-proteins"> г</li>
+                <li>Жиры: <input type="number" step="0.1" name="fats" class="edit-fats"> г</li>
+                <li>Углеводы: <input type="number" step="0.1" name="carbohydrates" class="edit-carbohydrates"> г</li>
+            </ul>
+            <button type="submit" class="save-edit-button">Сохранить</button>
+            <button type="button" class="cancel-edit-button">Отмена</button>
+        </form>
     </template>
 
     <template id="add-product-form-template">
@@ -76,6 +94,8 @@
     <script src="/static/js/share/show_error.js?v=1"></script>
     <script src="/static/js/products/load_products.js?v=1"></script>
     <script src="/static/js/products/add_product.js?v=1"></script>
+    <script src="/static/js/products/delete_product.js?v=1"></script>
+    <script src="/static/js/products/change_product.js?v=1"></script>
     <script src="/static/js/products/common.js?v=2"></script>
 
 </body>

@@ -37,7 +37,6 @@ async function addProduct(event) {
                 data[field] = parseFloat(data[field]) || 0;
         });
 
-        console.log(JSON.stringify(data));
         const response = await fetch('/api/products', {
             method: 'POST',
             headers: {

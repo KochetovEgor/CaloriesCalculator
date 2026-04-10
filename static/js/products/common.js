@@ -27,6 +27,18 @@ const addProductWrapper = document.getElementById("add-product-wrapper");
 
 document.addEventListener('DOMContentLoaded', loadProducts);
 
+listContainer.addEventListener("click", (event) => {
+    const target = event.target;
+
+    if (target.classList.contains('delete-product-button')) {
+        deleteProduct(event);
+    }
+
+    if (target.classList.contains('edit-product-button')) {
+        showEditForm(event);
+    }
+});
+
 loadProductsButton.addEventListener("click", loadProducts);
 
 showAddFormButton.addEventListener("click", showAddForm);
