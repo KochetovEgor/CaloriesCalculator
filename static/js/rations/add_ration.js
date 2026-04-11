@@ -104,6 +104,6 @@ async function addRation(event) {
         if (!error.message) {
             error.message = ["Неизвестная ошибка"];
         }
-        showErrors(addProductButton, error.message);
+        showErrors(addRationBtn, error.message);
     }
 }

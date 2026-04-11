@@ -57,6 +57,8 @@ async function addProduct(event) {
         }
 
         addProductToList(listContainer, product, productTemplate);
+        document.getElementById("cancel-add-button").click();
+        showAddFormButton.click();
 
     } catch (error) {
         if (error.status == 401) {
