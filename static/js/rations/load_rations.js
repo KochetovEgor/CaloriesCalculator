@@ -1,11 +1,7 @@
 "use strict"
 
-async function deleteProduct(event) {
-    const button = event.target;
-    const productItem = button.closest(".product-item");
-    const productName = productItem.querySelector(".product-name").textContent;
-
-    showErrors(button, []);
+async function loadRations() {
+    showErrors(loadRationsButton, []);
 
     const token = localStorage.getItem('access_token');
 
@@ -14,26 +10,26 @@ async function deleteProduct(event) {
             throw {status: 401};
         }
 
-        const data = {name: productName};
-
-        const response = await fetch("/api/products", {
-            method: "DELETE",
+        const response = await fetch('/api/rations', {
+            method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+            }
         });
 
+        const rations = await response.json();
+
         if (!response.ok) {
-            const deleteResp = await response.json();
             throw {
                 status: response.status,
-                message: deleteResp.errors
+                message: rations.errors
             };
         }
 
-        productItem.remove();
+        listContainer.innerHTML = '';
+
+        rations.forEach(ration => addRationToList(listContainer, ration, rationTemplate));
 
     } catch (error) {
         if (error.status == 401) {
@@ -44,6 +40,6 @@ async function deleteProduct(event) {
         if (!error.message) {
             error.message = ["Неизвестная ошибка"];
         }
-        showErrors(button, error.message);
+        showErrors(loadRationsButton, error.message);
     }
 }

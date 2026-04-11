@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/common.css?v=1">
+    <title>Рационы</title>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="header-nav">
+            <div class="nav-links">
+                <a href="/" class="nav-item">На главную</a>
+            </div>
+
+            <div class="nav-links">
+                <a href="/products" class="nav-item">Продукты</a>
+            </div>
+
+            <div class="nav-links">
+                <a href="/rations" class="nav-item">Рационы</a>
+            </div>
+
+            <div id="auth-container" class="auth-block">
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Ваши рационы</h1>
+
+        <div class="top-controls">
+            <button id="load-rations-button">Показать рационы</button>
+            <button id="show-add-form-button">Добавить рацион</button>
+        </div>
+
+        <div id="add-ration-wrapper"></div>
+
+        <ul id="rations-list">
+        </ul>
+    </main>
+
+    <template id="ration-template">
+        <li class="ration-item">
+            <h3 class="ration-date"></h3>
+            <ul class="ration-specs">
+                <li class="calories-info">
+                    <span>Калории:</span>
+                    <div class="val-wrapper">
+                        <span class="val-calories"></span>
+                        <span class="unit-text">ккал</span>
+                    </div>
+                </li>
+                <li class="proteins-info">
+                    <span>Белки:</span>
+                    <div class="val-wrapper">
+                        <span class="val-proteins"></span>
+                        <span class="unit-text">г</span>
+                    </div>
+                </li>
+                <li class="fats-info">
+                    <span>Жиры:</span>
+                    <div class="val-wrapper">
+                        <span class="val-fats"></span>
+                        <span class="unit-text">г</span>
+                    </div>
+                </li>
+                <li class="carbohydrates-info">
+                    <span>Углеводы:</span>
+                    <div class="val-wrapper">
+                        <span class="val-carbohydrates"></span>
+                        <span class="unit-text">г</span>
+                    </div>
+                </li>
+            </ul>
+            <div class="ration-actions">
+                <button class="details-ration-button">Подробнее</button>
+                <button class="edit-ration-button">Изменить</button>
+                <button class="delete-ration-button">Удалить</button>
+            </div>
+        </li>
+    </template>
+
+    <datalist id="products-datalist"></datalist>
+
+    <template id="add-ration-template">
+        <div id="add-ration-form-container">
+            <form id="add-ration-form" class="auth-block">
+                <h3>Новый рацион</h3>
+                
+                <div class="form-group">
+                    <label for="ration-date-input">Дата:</label>
+                    <input type="date" id="ration-date-input" name="date" required>
+                </div>
+
+                <div class="prodctss-section">
+                    <label>Продукты:</label>
+                    <div id="ration-products-list"></div>
+                    
+                    <button type="button" id="add-product-row-btn" class="add-button-circle">+</button>
+                </div>
+
+                <div class="ration-actions">
+                    <button type="submit" id="add-ration-btn" class="save-edit-button">Создать рацион</button>
+                    <button type="button" id="cancel-add-ration-btn" class="cancel-edit-button">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </template>
+
+    <template id="product-row-template">
+        <div class="product-row">
+            <input type="text" class="product-search-input" list="products-datalist" placeholder="Блюдо..." required>
+            <input type="number" class="product-weight-input" placeholder="Вес (г)" step="0.1" min="0">
+            <input type="number" class="product-portion-input" placeholder="Порции" step="0.1" min="0">
+            <button type="button" class="remove-product-row-btn">-</button>
+        </div>
+    </template>
+
+    <template id="error-template">
+        <div class="field-errors-container">
+            <ul class="error-list"></ul>
+        </div>
+    </template>
+
+    <script src="/static/js/share/render_user_logged.js?v=1.js"></script>
+    <script src="/static/js/share/show_error.js?v=1"></script>
+    <script src="/static/js/rations/load_rations.js?v=1"></script>
+    <script src="/static/js/rations/add_ration.js?v=4"></script>
+    <script src="/static/js/rations/delete_ration.js?v=1"></script>
+    <script src="/static/js/rations/common.js?v=4"></script>
+
+</body>
+</html>

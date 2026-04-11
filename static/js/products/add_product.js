@@ -12,7 +12,7 @@ function showAddForm() {
 
     document.getElementById("cancel-add-button").addEventListener("click", () => {
         container.remove();
-        showAddFormButton.style.display = "block";
+        showAddFormButton.style.display = "";
     });
 }
 
@@ -61,6 +61,8 @@ async function addProduct(event) {
     } catch (error) {
         if (error.status == 401) {
             error.message = ["Пользователь не авторизован"];
+            localStorage.removeItem("access_token");
+            renderUserLoggedOut();
         }
         if (!error.message) {
             error.message = ["Неизвестная ошибка"];

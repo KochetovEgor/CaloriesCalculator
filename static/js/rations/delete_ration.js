@@ -1,9 +1,9 @@
 "use strict"
 
-async function deleteProduct(event) {
+async function deleteRation(event) {
     const button = event.target;
-    const productItem = button.closest(".product-item");
-    const productName = productItem.querySelector(".product-name").textContent;
+    const rationItem = button.closest(".ration-item");
+    const rationDate = rationItem.querySelector(".ration-date").textContent;
 
     showErrors(button, []);
 
@@ -14,9 +14,9 @@ async function deleteProduct(event) {
             throw {status: 401};
         }
 
-        const data = {name: productName};
+        const data = {date: rationDate};
 
-        const response = await fetch("/api/products", {
+        const response = await fetch("/api/rations", {
             method: "DELETE",
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -33,7 +33,7 @@ async function deleteProduct(event) {
             };
         }
 
-        productItem.remove();
+        rationItem.remove();
 
     } catch (error) {
         if (error.status == 401) {

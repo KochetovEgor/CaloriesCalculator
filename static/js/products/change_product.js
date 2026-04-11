@@ -4,7 +4,6 @@ function showEditForm(event) {
     const productItem = event.target.closest('.product-item');
     const template = document.getElementById('edit-product-template');
     
-    // Создаем клон
     const editFormClone = template.content.cloneNode(true);
 
     const currentData = {
@@ -19,7 +18,6 @@ function showEditForm(event) {
 
     const form = editFormClone.querySelector('.edit-product-form');
     
-    // Заполняем данными
     form.querySelector('.edit-name-display').textContent = currentData.name;
     form.querySelector('.edit-name-input').value = currentData.name;
     form.querySelector('.edit-base-weight').value = currentData.weight;
@@ -29,15 +27,12 @@ function showEditForm(event) {
     form.querySelector('.edit-fats').value = currentData.fats;
     form.querySelector('.edit-carbohydrates').value = currentData.carbohydrates;
 
-    // Сохраняем оригинал ДО очистки
     const originalContent = productItem.innerHTML;
 
-    // Очищаем карточку и вставляем форму
     productItem.innerHTML = '';
-    // ВАЖНО: Мы добавляем форму, и теперь она должна занимать 100% ширины
+
     productItem.appendChild(editFormClone); 
 
-    // Находим элементы уже ВНУТРИ DOM после вставки
     const currentForm = productItem.querySelector('.edit-product-form');
 
     currentForm.querySelector('.cancel-edit-button').addEventListener("click", function () {
@@ -91,6 +86,8 @@ async function changeProduct(event) {
     } catch (error) {
         if (error.status == 401) {
             error.message = ["Пользователь не авторизован"];
+            localStorage.removeItem("access_token");
+            renderUserLoggedOut();
         }
         if (!error.message) {
             error.message = ["Неизвестная ошибка"];
