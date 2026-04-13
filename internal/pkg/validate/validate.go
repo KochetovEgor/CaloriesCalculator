@@ -22,7 +22,15 @@ func UsernameAndPassword(username string, password string) error {
 }
 
 func User(user domain.User) error {
-	return Username(user.Username)
+	var errs []error
+	if err := Username(user.Username); err != nil {
+		errs = append(errs, err)
+	}
+
+	if errs != nil {
+		return myerrors.Join(errs...)
+	}
+	return nil
 }
 
 func Product(product domain.Product) error {
